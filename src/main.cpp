@@ -15,11 +15,7 @@ int main()
 {
 
    std::cout << "Project start";
-//   ros::init(argc,argv,"kinectViewer");
- //  ros::NodeHandle n;
-  // ros::Subscriber sub = n.subscribe("/camera/rgb/image_color",1,rgbCallback);
-  // ros::Subscriber depth = n.subscibe("/camera/depth/image",1,depthCallback);
-  // ros::spin(); 
+ 
 
 
 
