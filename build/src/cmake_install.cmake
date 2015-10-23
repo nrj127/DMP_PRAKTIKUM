@@ -1,4 +1,4 @@
-# Install script for directory: /home/neeraj/Desktop/winter_semester_2015/lee_praktikum/src
+# Install script for directory: /home/neeraj/Desktop/winter_semester_2015/DMP_PRAKTIKUM/DMP_PRAKTIKUM/src
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)

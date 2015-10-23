@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/home/neeraj/Desktop/winter_semester_2015/lee_praktikum/src/main.cpp" "/home/neeraj/Desktop/winter_semester_2015/lee_praktikum/build/src/CMakeFiles/main.dir/main.cpp.o"
+  "/home/neeraj/Desktop/winter_semester_2015/DMP_PRAKTIKUM/DMP_PRAKTIKUM/src/main.cpp" "/home/neeraj/Desktop/winter_semester_2015/DMP_PRAKTIKUM/DMP_PRAKTIKUM/build/src/CMakeFiles/main.dir/main.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 
