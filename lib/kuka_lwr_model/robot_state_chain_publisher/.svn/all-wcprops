@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/p/tum-ros-pkg/code/!svn/ver/685/robot_model/robot_state_chain_publisher
+END
+manifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/p/tum-ros-pkg/code/!svn/ver/652/robot_model/robot_state_chain_publisher/manifest.xml
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/p/tum-ros-pkg/code/!svn/ver/652/robot_model/robot_state_chain_publisher/CMakeLists.txt
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/p/tum-ros-pkg/code/!svn/ver/652/robot_model/robot_state_chain_publisher/Makefile
+END

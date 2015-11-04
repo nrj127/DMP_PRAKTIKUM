@@ -1,0 +1,104 @@
+<launch> 
+ <!-- Load URDF robot model and environment -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find dhri_robot_defs)/robots/kuka_lwr_arm.urdf.xml'"/>  
+
+ <arg name="state_publisher" default="true"/>  <!-- True: Robot state publisher - Transform joint angles to tf frames -->
+ <arg name="ros_interface" default="false" />  <!-- True: Fri-Ros Interface active -->
+ <arg name="fri_to_ros_msg" default="false" />  <!-- True: Convert from LWR_joints msg to JointState, NOTE: ros_interface must be true -->
+ <arg name="inv_kinematics" default="false"/> <!-- True: Compute the joint angles using inverse kinematics, NOTE: fri_to_ros_msg must be false -->
+ <arg name="set_joint_manually" default="false"/> <!-- True: Manually set the joint angles, NOTE: inv_kinematics, fri_to_ros_msg must be false -->
+ <arg name="run_rviz" default="true"/> <!-- True: run rviz -->
+ <arg name="draw_goal" default="false"/> <!-- True: draw the goal position in rviz. -->
+ <arg name="sim_obstacle" default="false"/> <!-- True: Simulate an obstacle in the depth map -->
+ <arg name="kinect_to_world" default="false"/> <!-- True: Publish transformation from kinect to world frame -->
+
+
+
+ <!-- Robot state publisher - Transform joint angles to tf frames -->
+  <node if="$(arg state_publisher)" pkg="robot_state_chain_publisher" type="state_chain_publisher" name="robot_state_chain_publisher" output="screen">
+  <param name="publish_frequency" value="100"/>
+  </node> 
+
+
+ <!-- LWR dummy robot -->
+  <node if="$(arg ros_interface)" pkg="fri_ros_interface" type="FriRosInterface" name="FriRosInterface" output="screen">
+   <param name="use_real_robot" value="false"/>
+   <param name="visual_thread_prior" value="20"/>
+   <param name="visual_loop_frequency" value="100"/>
+   <param name="control_loop_frequency" value="500"/> <!-- 500 or 1000 are supported -->
+  </node> 
+
+
+ <!-- Convert from fri_ros_interface/LWR_joints msg to sensor_msgs/JointState -->
+  <node if="$(arg fri_to_ros_msg)" pkg="LWR_Simulator" type="jointStateConverter" name="jointStateConverter" output="screen">
+  <param name="measured_joint_topic" value="/dhri_lwr/Visualization/Joints/joint_measured_pos"/>
+  <rosparam command="load" file="$(find LWR_Simulator)/launch/initial_joint_angles.yaml" />
+  </node> 
+
+ 
+ <!-- Joint angles publisher -->
+ <!-- Uncomment to compute the joint angles using inverse kinematics -->
+ <group unless="$(arg fri_to_ros_msg)">
+  <node if="$(arg inv_kinematics)" pkg="robot_state_chain_publisher" type="joint_state_publisher" name="joint_state_publisher" output="screen">
+   <param name="desired_pose_topic" value="/reference_state"/>
+   <param name="use_pos_limit" value="1"/>
+   <param name="use_vel_limit" value="1"/>
+   <rosparam command="load" file="$(find LWR_Simulator)/launch/initial_joint_angles.yaml" />
+  </node> 
+ </group>
+
+ 
+ <!-- Uncomment to manually set the joint angles -->
+ <group unless="$(arg inv_kinematics)">
+  <node if="$(arg set_joint_manually)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+   <param name="tf_prefix" value=""/>
+   <param name="use_gui" value="on"/>
+   <param name="rate" value="100"/>
+  </node> 
+ </group>
+
+
+ <!-- Robot visualizer - rviz -->
+  <node if="$(arg run_rviz)" pkg="rviz" type="rviz" name="rviz"/>  -->
+
+
+ <!-- Draw goal position(s) -->
+  <node if="$(arg draw_goal)" name="drawGoalPosition" pkg="LWR_Simulator" type="drawGoalPosition">
+   <param name="world_frame" value="/world"/>
+   <!-- <param name="goal_file" value="$(find LearningVariableStiffness)/data_set_praktikum/Models/Circle0/xT.txt"/> -->
+   <param name="goal_file" value="$(find DistanceBasedModulation)/experiments/goal_rhombus.txt"/>
+   <param name="obstacle_file" value="$(find DistanceBasedModulation)/experiments/obstacles.txt"/>
+   <param name="publish_frequency" value="1.0"/>
+  </node> 
+
+
+ <!-- Simulate Obstacles. Points stored in "DistanceBasedModulation/experiments/obstacles.txt" -->
+  <node if="$(arg sim_obstacle)" pkg="DistanceBasedModulation" type="simulateObject" name="simulateObject" output="screen" />
+  
+  <node if="$(arg kinect_to_world)" pkg="tf" type="static_transform_publisher" name="camera_depth_frame" args="0 -0.02 0 0 0 0 1  /camera_link /camera_depth_frame 10" /> 
+  <node if="$(arg kinect_to_world)" pkg="tf" type="static_transform_publisher" name="camera_rgb_frame" args="0 -0.045 0 0 0 0 1  /camera_link /camera_rgb_frame 10" /> 
+  <node if="$(arg kinect_to_world)" pkg="tf" type="static_transform_publisher" name="camera_link" args="-0.401 -0.286  0.564 -0.633825359938 0.665817251078 -0.181285669834 0.349411372425  /kinect_world /camera_link 10" /> 
+  <node if="$(arg kinect_to_world)" pkg="tf" type="static_transform_publisher" name="kinect_world" args="0.028 0.333  0 0 0 1 0 /world /kinect_world 10" /> 
+
+
+  <!-- Dummy /world frame for rviz -->
+  <node pkg="tf" type="static_transform_publisher" name="arm_world_link" args="0 0 0 0 0 1 0 /world /arm_world_link 10" /> 
+
+  <!-- Add a frame at the end of the gripper -->
+  <node pkg="tf" type="static_transform_publisher" name="wsg50_end_link" args="0 0 0.145 0 0 0 1 /wsg50_gripper_base_link /wsg50_end_link 10" /> 
+
+  <!-- Add kinect frames transformations 
+  <node pkg="tf" type="static_transform_publisher" name="camera_depth_frame" args="0 -0.02 0 0 0 0 1  /camera_link /camera_depth_optical_frame 10" /> 
+  <node pkg="tf" type="static_transform_publisher" name="camera_rgb_frame" args="0 -0.045 0 0 0 0 1  /camera_link /camera_rgb_optical_frame 10" /> 
+  <node pkg="tf" type="static_transform_publisher" name="kinect_origin" args="-0.369 -0.225 0.4 -93.46 -2.73 -143.26  /origin /camera_link 10" /> 
+  <node pkg="tf" type="static_transform_publisher" name="origin_world" args="0 0 0.0 0 0 0 /world /origin 10" />  -->
+  <node pkg="tf" type="static_transform_publisher" name="origin_world" args="0 0 0.0 0 0 0 /world /origin 10" />
+
+  <!-- Remove this dummy frames -->
+ <!-- <node pkg="tf" type="static_transform_publisher" name="marker1_world" args="0 0 0 0 0 0 /world /ar_marker_1 10" /> 
+  <node pkg="tf" type="static_transform_publisher" name="marker6_world" args="0 0 0 0 0 0 /world /ar_marker_6 10" /> 
+  <node pkg="tf" type="static_transform_publisher" name="marker8_world" args="0 0 0 0 0 0 /world /ar_marker_8 10" /> 
+  <node pkg="tf" type="static_transform_publisher" name="tray_1_world" args="0 0 0 0 0 0 /world /ar_marker_5 10" /> 
+  <node pkg="tf" type="static_transform_publisher" name="tray_2_world" args="0 0 0 0 0 0 /world /ar_marker_2 10" /> -->
+
+</launch>

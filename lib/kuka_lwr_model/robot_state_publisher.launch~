@@ -1,0 +1,18 @@
+<launch>
+  <!-- Load an example URDF -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find dhri_robot_defs)/robots/kuka_lwr_arm.urdf.xml'"/>
+
+  <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
+    <param name="tf_prefix" value=""/>
+  </node> -->
+
+  <!-- Robot state publisher 
+  <node pkg="robot_state_chain_publisher" type="state_chain_publisher" 	name="robot_state_chain_publisher" output="screen" /> -->
+
+  <!-- Dummy /world frame for kinect -->
+  <node pkg="tf" type="static_transform_publisher" name="world_broadcaster1" args="0 0 	0 0 0 0 1 /world camera_link 100" />
+
+  <!-- Dummy /world frame for rviz -->
+  <node pkg="tf" type="static_transform_publisher" name="world_broadcaster2" args="0 0 	0 0 0 0 1 /world /world_link 100" />
+</launch>
+

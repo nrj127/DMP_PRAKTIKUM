@@ -1,0 +1,17 @@
+<launch> 
+  <!-- Load URDF robot model and environment -->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find dhri_robot_defs)/robots/kuka_lwr_arm.urdf.xml'"/>
+
+
+ <!-- Draw goal position(s) 
+  <node name="drawGoalPosition" pkg="LWR_Simulator" type="drawGoalPosition">
+   <param name="world_frame"       value="/world"/>
+   <param name="goal_file"         value="$(find DistanceBasedModulation)/experiments/cloud.txt"/>
+   <param name="publish_frequency" value="1.0"/>
+  </node> -->
+
+
+ <!-- Dummy /world frame for rviz --> 
+  <node pkg="tf" type="static_transform_publisher" name="arm_world_link" args="0 0 0 0 0 1 0 /world /arm_world_link 10" />
+
+</launch>
