@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/robot_state_chain_publisher/bin/devel/setup.sh

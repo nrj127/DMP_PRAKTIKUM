@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/dhri_robot_defs/bin/devel/setup.sh

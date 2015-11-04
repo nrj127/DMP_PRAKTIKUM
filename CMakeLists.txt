@@ -21,9 +21,9 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined services
 #rosbuild_gensrv()
 
-set(INCLUDE_FRI src/FRILibrary/include)
-set(LIB_FRI src/FRILibrary/Linux/x64/release/lib)
-set(SOURCES_FRI src/FRILibrary/src)
+set(INCLUDE_FRI utility/FRILibrary/include)
+set(LIB_FRI utility/FRILibrary/Linux/x64/release/lib)
+set(SOURCES_FRI utility/FRILibrary/src)
 
 
 include_directories(

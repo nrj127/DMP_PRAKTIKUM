@@ -291,3 +291,33 @@ Linking C executable cmTryCompileExec3427761710
 make[1]: Leaving directory `/home/tomelloso/dmp_praktikum/build/CMakeFiles/CMakeTmp'
 
 
+Determining if files pthread.h exist passed with the following output:
+Change Dir: /home/tomelloso/dmp_praktikum/build/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec1902788544/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec1902788544.dir/build.make CMakeFiles/cmTryCompileExec1902788544.dir/build
+make[1]: Entering directory `/home/tomelloso/dmp_praktikum/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/tomelloso/dmp_praktikum/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec1902788544.dir/CheckIncludeFiles.c.o
+/usr/bin/cc    -o CMakeFiles/cmTryCompileExec1902788544.dir/CheckIncludeFiles.c.o   -c /home/tomelloso/dmp_praktikum/build/CMakeFiles/CMakeTmp/CheckIncludeFiles.c
+Linking C executable cmTryCompileExec1902788544
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec1902788544.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTryCompileExec1902788544.dir/CheckIncludeFiles.c.o  -o cmTryCompileExec1902788544 -rdynamic 
+make[1]: Leaving directory `/home/tomelloso/dmp_praktikum/build/CMakeFiles/CMakeTmp'
+
+
+Determining if the function pthread_create exists in the pthread passed with the following output:
+Change Dir: /home/tomelloso/dmp_praktikum/build/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec1032666750/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec1032666750.dir/build.make CMakeFiles/cmTryCompileExec1032666750.dir/build
+make[1]: Entering directory `/home/tomelloso/dmp_praktikum/build/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/tomelloso/dmp_praktikum/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec1032666750.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec1032666750.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-2.8/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec1032666750
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec1032666750.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec1032666750.dir/CheckFunctionExists.c.o  -o cmTryCompileExec1032666750 -rdynamic -lpthread 
+make[1]: Leaving directory `/home/tomelloso/dmp_praktikum/build/CMakeFiles/CMakeTmp'
+
+

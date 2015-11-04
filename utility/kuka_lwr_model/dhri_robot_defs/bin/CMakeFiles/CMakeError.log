@@ -1,0 +1,53 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/dhri_robot_defs/bin/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec3477637578/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec3477637578.dir/build.make CMakeFiles/cmTryCompileExec3477637578.dir/build
+make[1]: Entering directory `/home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/dhri_robot_defs/bin/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/dhri_robot_defs/bin/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec3477637578.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTryCompileExec3477637578.dir/CheckSymbolExists.c.o   -c /home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/dhri_robot_defs/bin/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTryCompileExec3477637578
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec3477637578.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTryCompileExec3477637578.dir/CheckSymbolExists.c.o  -o cmTryCompileExec3477637578 -rdynamic 
+CMakeFiles/cmTryCompileExec3477637578.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+make[1]: Leaving directory `/home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/dhri_robot_defs/bin/CMakeFiles/CMakeTmp'
+make[1]: *** [cmTryCompileExec3477637578] Error 1
+make: *** [cmTryCompileExec3477637578/fast] Error 2
+
+File /home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/dhri_robot_defs/bin/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/dhri_robot_defs/bin/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/make "cmTryCompileExec1213970733/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec1213970733.dir/build.make CMakeFiles/cmTryCompileExec1213970733.dir/build
+make[1]: Entering directory `/home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/dhri_robot_defs/bin/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/dhri_robot_defs/bin/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec1213970733.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec1213970733.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-2.8/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec1213970733
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec1213970733.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec1213970733.dir/CheckFunctionExists.c.o  -o cmTryCompileExec1213970733 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: Leaving directory `/home/tomelloso/dmp_praktikum/utility/kuka_lwr_model/dhri_robot_defs/bin/CMakeFiles/CMakeTmp'
+make[1]: *** [cmTryCompileExec1213970733] Error 1
+make: *** [cmTryCompileExec1213970733/fast] Error 2
+
+

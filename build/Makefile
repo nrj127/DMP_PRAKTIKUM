@@ -79,16 +79,6 @@ install/local: preinstall
 install/local/fast: install/local
 .PHONY : install/local/fast
 
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: install/strip
-.PHONY : install/strip/fast
-
 # Special rule for the target list_install_components
 list_install_components:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
@@ -451,141 +441,6 @@ gtest_main/fast:
 	$(MAKE) -f gtest/CMakeFiles/gtest_main.dir/build.make gtest/CMakeFiles/gtest_main.dir/build
 .PHONY : gtest_main/fast
 
-lib/FRILibrary/src/TypeIRML/TypeIRML.o: lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.o
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRML.o
-
-# target to build an object file
-lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.o:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.o
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.o
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.o
-
-lib/FRILibrary/src/TypeIRML/TypeIRML.i: lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.i
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRML.i
-
-# target to preprocess a source file
-lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.i:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.i
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.i
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.i
-
-lib/FRILibrary/src/TypeIRML/TypeIRML.s: lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.s
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRML.s
-
-# target to generate assembly for a file
-lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.s:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.s
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.s
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRML.cpp.s
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.o: lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.o
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.o
-
-# target to build an object file
-lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.o:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.o
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.o
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.o
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.i: lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.i
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.i
-
-# target to preprocess a source file
-lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.i:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.i
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.i
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.i
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.s: lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.s
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.s
-
-# target to generate assembly for a file
-lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.s:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.s
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.s
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.s
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLMath.o: lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.o
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLMath.o
-
-# target to build an object file
-lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.o:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.o
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.o
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.o
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLMath.i: lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.i
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLMath.i
-
-# target to preprocess a source file
-lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.i:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.i
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.i
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.i
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLMath.s: lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.s
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLMath.s
-
-# target to generate assembly for a file
-lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.s:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.s
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.s
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.s
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.o: lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.o
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.o
-
-# target to build an object file
-lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.o:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.o
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.o
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.o
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.i: lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.i
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.i
-
-# target to preprocess a source file
-lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.i:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.i
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.i
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.i
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.s: lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.s
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.s
-
-# target to generate assembly for a file
-lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.s:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.s
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.s
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.s
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.o: lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.o
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.o
-
-# target to build an object file
-lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.o:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.o
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.o
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.o
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.i: lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.i
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.i
-
-# target to preprocess a source file
-lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.i:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.i
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.i
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.i
-
-lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.s: lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.s
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.s
-
-# target to generate assembly for a file
-lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.s:
-	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.s
-	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.s
-.PHONY : lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.s
-
 src/RunTrajectorySimple.o: src/RunTrajectorySimple.cpp.o
 .PHONY : src/RunTrajectorySimple.o
 
@@ -661,6 +516,141 @@ src/mainFRITest_rviz.cpp.s:
 	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/src/mainFRITest_rviz.cpp.s
 .PHONY : src/mainFRITest_rviz.cpp.s
 
+utility/FRILibrary/src/TypeIRML/TypeIRML.o: utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.o
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRML.o
+
+# target to build an object file
+utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.o:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.o
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.o
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.o
+
+utility/FRILibrary/src/TypeIRML/TypeIRML.i: utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.i
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRML.i
+
+# target to preprocess a source file
+utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.i:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.i
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.i
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.i
+
+utility/FRILibrary/src/TypeIRML/TypeIRML.s: utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.s
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRML.s
+
+# target to generate assembly for a file
+utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.s:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.s
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.s
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRML.cpp.s
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.o: utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.o
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.o
+
+# target to build an object file
+utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.o:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.o
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.o
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.o
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.i: utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.i
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.i
+
+# target to preprocess a source file
+utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.i:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.i
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.i
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.i
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.s: utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.s
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.s
+
+# target to generate assembly for a file
+utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.s:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.s
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.s
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.cpp.s
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLMath.o: utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.o
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLMath.o
+
+# target to build an object file
+utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.o:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.o
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.o
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.o
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLMath.i: utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.i
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLMath.i
+
+# target to preprocess a source file
+utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.i:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.i
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.i
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.i
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLMath.s: utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.s
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLMath.s
+
+# target to generate assembly for a file
+utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.s:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.s
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.s
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLMath.cpp.s
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.o: utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.o
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.o
+
+# target to build an object file
+utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.o:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.o
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.o
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.o
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.i: utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.i
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.i
+
+# target to preprocess a source file
+utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.i:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.i
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.i
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.i
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.s: utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.s
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.s
+
+# target to generate assembly for a file
+utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.s:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.s
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.s
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.cpp.s
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.o: utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.o
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.o
+
+# target to build an object file
+utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.o:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.o
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.o
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.o
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.i: utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.i
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.i
+
+# target to preprocess a source file
+utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.i:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.i
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.i
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.i
+
+utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.s: utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.s
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.s
+
+# target to generate assembly for a file
+utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.s:
+	$(MAKE) -f CMakeFiles/mainFRITest.dir/build.make CMakeFiles/mainFRITest.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.s
+	$(MAKE) -f CMakeFiles/mainFRITest_rviz.dir/build.make CMakeFiles/mainFRITest_rviz.dir/utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.s
+.PHONY : utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -678,7 +668,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... install"
 	@echo "... install/local"
-	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... mainFRITest"
 	@echo "... mainFRITest_rviz"
@@ -697,21 +686,6 @@ help:
 	@echo "... tests"
 	@echo "... gtest"
 	@echo "... gtest_main"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRML.o"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRML.i"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRML.s"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.o"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.i"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLDecision.s"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLMath.o"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLMath.i"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLMath.s"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.o"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.i"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.s"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.o"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.i"
-	@echo "... lib/FRILibrary/src/TypeIRML/TypeIRMLProfiles.s"
 	@echo "... src/RunTrajectorySimple.o"
 	@echo "... src/RunTrajectorySimple.i"
 	@echo "... src/RunTrajectorySimple.s"
@@ -721,6 +695,21 @@ help:
 	@echo "... src/mainFRITest_rviz.o"
 	@echo "... src/mainFRITest_rviz.i"
 	@echo "... src/mainFRITest_rviz.s"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRML.o"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRML.i"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRML.s"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.o"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.i"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLDecision.s"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLMath.o"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLMath.i"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLMath.s"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.o"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.i"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLPolynomial.s"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.o"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.i"
+	@echo "... utility/FRILibrary/src/TypeIRML/TypeIRMLProfiles.s"
 .PHONY : help
 
 
