@@ -1,0 +1,15 @@
+#################################
+Install pbdlib on target:
+
+Dependencies
+PbDLib requires Armadillo for linear algebra operations, which runs faster if Lapack is also installed. PbDLib can be compiled with CMake.
+
+sudo apt-get install cmake liblapack3 liblapack-dev libarmadillo4 libarmadillo-dev
+Installation instructions
+cd pbdlib
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+#################################
