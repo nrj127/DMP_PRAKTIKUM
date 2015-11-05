@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
     fprintf(stdout, "You may need superuser permission to run this program.\n");
     fflush(stdout);
 
-    std::string packPath = ros::package::getPath("LWR_Affan_Dmp");
+    std::string packPath = ros::package::getPath("dmp_praktikum");
 
     FRI = new FastResearchInterface((packPath + "/data/Control-FRI-Driver_5ms.init").c_str());
     fprintf(stdout, "OK-OK\n");

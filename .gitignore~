@@ -1,0 +1,4 @@
+build/
+bin/
+utilities/pbdlib/build/
+CMakeLists.txt.user

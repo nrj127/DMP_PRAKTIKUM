@@ -1,0 +1,19 @@
+<package>
+  <description brief="LWR_attention_control">
+
+     LWR_attention_control
+
+  </description>
+  <author>hwadong</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/LWR_attention_control</url>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+  <depend package="sensor_msgs"/>
+  <depend package="rospy"/>
+  <depend package="roslib"/>
+
+</package>
+
+
