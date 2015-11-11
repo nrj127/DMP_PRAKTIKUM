@@ -12,12 +12,16 @@ class onlineGMR
 {
 private:
 
+    char* inputFile;
+    char* outputFile;
+
 public:
-    onlineGMR();
+    onlineGMR(char *inputFile, char *outputFile);
 
-    void readMatlabFile(char* fname);
 
-    void writeMatlabFile(char* fname);
+    void readMatlabFile();
+
+    void writeMatlabFile();
 
     void regression();
 
