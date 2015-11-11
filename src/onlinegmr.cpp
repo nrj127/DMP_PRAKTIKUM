@@ -1,31 +1,46 @@
 #include "onlinegmr.h"
 #include <stdio.h>
 
-using namespace std;
+
 
 onlineGMR::onlineGMR(char* inputFile, char* outputFile) : inputFile(inputFile), outputFile(outputFile)
 {
 
 }
 
+//creates an armadillo matrix from a matlab matrix
+mat onlineGMR::armadilloMatrix(mxArray *matlabMatrix)
+{
+    mwSize mrows = mxGetM(matlabMatrix);
+    mwSize ncols = mxGetN(matlabMatrix);
+    double *values = mxGetPr(matlabMatrix);
+
+    return mat(values, mrows, ncols);
+}
+
 
 void onlineGMR::readMatlabFile()
 {
     MATFile *pmat;
-    const char* name= inputFile;
+    const char* name= NULL;
     mxArray *pa;
 
+
+    // TODO: later declare as reference and add as data members
+    vector<double> vPriors;
+    vector<double> vMu;
+    vector<double> vPriors_mixtures;
+    vector<double> vMuSigma2;
+
     /* open mat file and read it's content */
-    pmat = matOpen( name, "r");
+    pmat = matOpen( inputFile, "r");
     if (pmat == NULL)
     {
         cout << "Error Opening File: " << name << endl;
         return;
     }
 
-    /* Read in each array. */
-    pa = matGetNextVariable(pmat, &name);
-    while (pa!=NULL)
+    while ((pa = matGetNextVariable(pmat,&name)) != NULL)
     {
         /*
         * Diagnose array pa
@@ -33,15 +48,43 @@ void onlineGMR::readMatlabFile()
         printf("\nArray %s has %d dimensions.", name,
                (int)mxGetNumberOfDimensions(pa));
 
-        //print matrix elements
-        // mlfPrintMatrix(pa);
+        // TODO: switch case variable names and implement reading for each variable
 
-        //get next variable
-        pa = matGetNextVariable(pmat,&name);
+        mxArray *my_matrix = mxCreateDoubleMatrix(4, 25, mxREAL);
+
+        my_matrix = mxGetCell(mxGetCell(pa, 0),0);
+
+        mat aM = armadilloMatrix(my_matrix);
+
+        aM.print(cout);
+
+        /*
+        if (pa != NULL && mxIsDouble(pa) && !mxIsEmpty(pa)) {
+            // copy data
+            mwSize num = mxGetNumberOfElements(pa);
+            // pointer to first element of real data
+            double *pr = mxGetPr(pa);
+            if (pr != NULL) {
+                // write data to variables here:
+
+                vPriors.resize(num);
+                vPriors.assign(pr, pr+num);
+            }
+        }
+
+        cout
+
+        // DEBUG print vector
+        for(vector<double>::iterator it = vPriors.begin(); it != vPriors.end(); ++it) {
+            cout << *it;
+        }
+        */
 
         //destroy allocated matrix
-        mxDestroyArray(pa);
+
     }
+
+    mxDestroyArray(pa);
 
     matClose(pmat);
 }

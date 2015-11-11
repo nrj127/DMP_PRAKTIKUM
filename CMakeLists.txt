@@ -78,7 +78,7 @@ rosbuild_add_executable(mainFRITest_rviz ${sources_irml} src/mainFRITest_rviz.cp
 target_link_libraries(mainFRITest_rviz -lFastResearchInterfaceLibrary -lrt)
 
 add_executable(mainOnlineGmrTest ${sources_thomas})
-target_link_libraries(mainOnlineGmrTest libmat.so libmx.so)
+target_link_libraries(mainOnlineGmrTest libmat.so libmx.so -larmadillo)
 # other matlab libs: libmx.lib libmatlb.lib libmmfile.lib
 
 
