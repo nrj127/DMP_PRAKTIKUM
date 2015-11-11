@@ -60,6 +60,11 @@ set( sources_affan
      src/onlinegmr.cpp
 )
 
+set( sources_frederik
+     src/dmp_integrator.cpp
+     src/test_dmp_integrator.cpp
+)
+
 add_definitions( -D__LINUX__ )
 
 #rosbuild_add_executable(FastResearchInterfaceTest ${sources_irml} ${sources_test})
@@ -70,6 +75,8 @@ target_link_libraries(mainFRITest -lFastResearchInterfaceLibrary -lrt)
 
 rosbuild_add_executable(mainFRITest_rviz ${sources_irml} src/mainFRITest_rviz.cpp src/RunTrajectorySimple.cpp)
 target_link_libraries(mainFRITest_rviz -lFastResearchInterfaceLibrary -lrt)
+
+rosbuild_add_executable(test_dmp ${sources_frederik})
 
 
 # TODO: TE: how to link which target to which library???
