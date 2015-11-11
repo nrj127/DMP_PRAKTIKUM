@@ -60,17 +60,20 @@ set( sources_affan
      src/RunTrajectorySimple.cpp
 )
 
+<<<<<<< HEAD
 set( sources_frederik
      src/dmp_integrator.cpp
      src/test_dmp_integrator.cpp
 )
 
+=======
 set( sources_thomas
       src/mainOnlineGmrTest.cpp
       src/onlinegmr.cpp
 )
 
 
+>>>>>>> b2c4e5293d8bc28c0205536d3adea0c76dac6d5c
 add_definitions( -D__LINUX__ )
 
 #rosbuild_add_executable(FastResearchInterfaceTest ${sources_irml} ${sources_test})
@@ -82,15 +85,17 @@ target_link_libraries(mainFRITest -lFastResearchInterfaceLibrary -lrt)
 rosbuild_add_executable(mainFRITest_rviz ${sources_irml} src/mainFRITest_rviz.cpp src/RunTrajectorySimple.cpp)
 target_link_libraries(mainFRITest_rviz -lFastResearchInterfaceLibrary -lrt)
 
+<<<<<<< HEAD
 rosbuild_add_executable(test_dmp ${sources_frederik})
-target_link_libraries(test_dmp libmat.so libmx.so -larmadillo)
 
 
 # TODO: TE: how to link which target to which library???
 #target_link_libraries(pbd ${ARMADILLO_LIBRARIES})
 #target_link_libraries(pbd ${Matlab_LIBRARIES})
+=======
 add_executable(mainOnlineGmrTest ${sources_thomas})
 target_link_libraries(mainOnlineGmrTest libmat.so libmx.so -larmadillo)
 # other matlab libs: libmx.lib libmatlb.lib libmmfile.lib
+>>>>>>> b2c4e5293d8bc28c0205536d3adea0c76dac6d5c
 
 
