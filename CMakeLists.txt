@@ -30,7 +30,7 @@ set(INCLUDE_FRI utility/FRILibrary/include)
 set(LIB_FRI utility/FRILibrary/Linux/x64/release/lib)
 set(SOURCES_FRI utility/FRILibrary/src)
 set(MATLAB_INCLUDE_DIR /usr/local/MATLAB/R2015b/extern/include)
-set(MATLAB_LIBRARIES /usr/local/MATLAB/R2015b/extern/lib)
+set(MATLAB_LIBRARIES /usr/local/MATLAB/R2015b/bin/glnxa64)
 
 
 include_directories(
@@ -43,6 +43,7 @@ include_directories(
 
 link_directories(
     ${LIB_FRI}
+    ${MATLAB_LIBRARIES}
 )
 
 set( sources_irml
@@ -57,8 +58,13 @@ set( sources_irml
 set( sources_affan
      src/mainFRITest.cpp
      src/RunTrajectorySimple.cpp
-     src/onlinegmr.cpp
 )
+
+set( sources_thomas
+      src/mainOnlineGmrTest.cpp
+      src/onlinegmr.cpp
+)
+
 
 add_definitions( -D__LINUX__ )
 
@@ -71,9 +77,8 @@ target_link_libraries(mainFRITest -lFastResearchInterfaceLibrary -lrt)
 rosbuild_add_executable(mainFRITest_rviz ${sources_irml} src/mainFRITest_rviz.cpp src/RunTrajectorySimple.cpp)
 target_link_libraries(mainFRITest_rviz -lFastResearchInterfaceLibrary -lrt)
 
-
-# TODO: TE: how to link which target to which library???
-#target_link_libraries(pbd ${ARMADILLO_LIBRARIES})
-#target_link_libraries(pbd ${Matlab_LIBRARIES})
+add_executable(mainOnlineGmrTest ${sources_thomas})
+target_link_libraries(mainOnlineGmrTest libmat.so libmx.so)
+# other matlab libs: libmx.lib libmatlb.lib libmmfile.lib
 
 
