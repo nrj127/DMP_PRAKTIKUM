@@ -1,6 +1,8 @@
 #ifndef ONLINEGMR_H
 #define ONLINEGMR_H
 
+#include <math.h>
+
 #include <armadillo>
 #include <mat.h>
 #include <matrix.h>
@@ -13,23 +15,42 @@
 using namespace std;
 using namespace arma;
 
+typedef struct {
+    vector< vector <mat> > Priors;
+    vector< vector <mat> > Mu;
+    vector< vector <mat> > Priors_mixtures;
+    vector< vector <cube> > Sigma2;
+} GMM;
+
 class onlineGMR
 {
 private:
 
-    char* inputFile;
-    char* outputFile;
+    const char* inputFile;
+    const char* outputFile;
 
-    mat armadilloMatrix(mxArray *matlabMatrix);
+    static const char FIRST_LEVEL_DIMENSIONS = 9;
+    static const char SIGMA_DIM_M = 4;
+    static const char SIGMA_DIM_N = 4;
+
+    static const char SIGMA_DIM_O = 25;
+
+    mat matlab2armadilloMatrix(mxArray *matlabMatrix);
+    cube matlab2armadilloMatrix3D(mxArray *matlabMatrix);
+
+    GMM gmm;
+
+
+
 public:
-    onlineGMR(char *inputFile, char *outputFile);
+    onlineGMR(const char *inputFile, const char *outputFile);
 
 
     void readMatlabFile();
 
-    void writeMatlabFile();
+    void writeMatlabFile() const;
 
-    void regression();
+    void regression(vec X_in);
 
 
 

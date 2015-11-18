@@ -1,21 +1,37 @@
 #include "onlinegmr.h"
+
+// TODO necessary?
+#include "mvn.h"
 #include <stdio.h>
 
 
 
-onlineGMR::onlineGMR(char* inputFile, char* outputFile) : inputFile(inputFile), outputFile(outputFile)
+onlineGMR::onlineGMR(const char *inputFile, const char *outputFile) : inputFile(inputFile), outputFile(outputFile)
 {
-
+    GMM gmm;
 }
 
 //creates an armadillo matrix from a matlab matrix
-mat onlineGMR::armadilloMatrix(mxArray *matlabMatrix)
+mat onlineGMR::matlab2armadilloMatrix(mxArray *matlabMatrix)
 {
     mwSize mrows = mxGetM(matlabMatrix);
     mwSize ncols = mxGetN(matlabMatrix);
+
     double *values = mxGetPr(matlabMatrix);
 
     return mat(values, mrows, ncols);
+}
+
+//creates a 3D armadillo matrix from a 3D matlab matrix
+cube onlineGMR::matlab2armadilloMatrix3D(mxArray *matlabMatrix)
+{
+    int mrows = mxGetDimensions(matlabMatrix)[0];
+    int ncols = mxGetDimensions(matlabMatrix)[1];
+    int hslice = mxGetDimensions(matlabMatrix)[2];
+
+    double *values = mxGetPr(matlabMatrix);
+
+    return cube(values, mrows, ncols, hslice);
 }
 
 
@@ -23,77 +39,109 @@ void onlineGMR::readMatlabFile()
 {
     MATFile *pmat;
     const char* name= NULL;
-    mxArray *pa;
-
-
-    // TODO: later declare as reference and add as data members
-    vector<double> vPriors;
-    vector<double> vMu;
-    vector<double> vPriors_mixtures;
-    vector<double> vMuSigma2;
+    mxArray *matlabInputMatrix;
 
     /* open mat file and read it's content */
     pmat = matOpen( inputFile, "r");
     if (pmat == NULL)
     {
-        cout << "Error Opening File: " << name << endl;
-        return;
+        cerr << "Error Opening File: " << name << endl;
+        exit(EXIT_FAILURE);
     }
 
-    while ((pa = matGetNextVariable(pmat,&name)) != NULL)
+    while ((matlabInputMatrix = matGetNextVariable(pmat,&name)) != NULL)
     {
-        /*
-        * Diagnose array pa
-        */
-        printf("\nArray %s has %d dimensions.", name,
-               (int)mxGetNumberOfDimensions(pa));
+        cout << "Found variable \"" << name << "\" with " << (int)mxGetNumberOfDimensions(matlabInputMatrix) << " dimensions" << endl;
 
-        // TODO: switch case variable names and implement reading for each variable
-
-        mxArray *my_matrix = mxCreateDoubleMatrix(4, 25, mxREAL);
-
-        my_matrix = mxGetCell(mxGetCell(pa, 0),0);
-
-        mat aM = armadilloMatrix(my_matrix);
-
-        aM.print(cout);
-
-        /*
-        if (pa != NULL && mxIsDouble(pa) && !mxIsEmpty(pa)) {
-            // copy data
-            mwSize num = mxGetNumberOfElements(pa);
-            // pointer to first element of real data
-            double *pr = mxGetPr(pa);
-            if (pr != NULL) {
-                // write data to variables here:
-
-                vPriors.resize(num);
-                vPriors.assign(pr, pr+num);
+        // check for variables names
+        if (strcmp(name, "Mu") == 0)
+        {
+            vector< vector <mat> > vDMPTemp;
+            for (int i=0; i < mxGetN(matlabInputMatrix); i++) {
+                vector<mat> vTemp;
+                for (int j=0; j < mxGetN(mxGetCell(matlabInputMatrix, i)); j++) {
+                     mxArray *matlabOutputMatrix = mxGetCell(mxGetCell(matlabInputMatrix, i),j);
+                     mat aM = matlab2armadilloMatrix(matlabOutputMatrix);
+                     vTemp.insert(vTemp.end(), aM);
+                }
+                vDMPTemp.insert(vDMPTemp.end(), vTemp);
+                /* test output
+                for(vector<mat>::iterator it = vTemp.begin(); it != vTemp.end(); ++it) {
+                    //(*it).print(cout);
+                }
+                */
             }
+            gmm.Mu.insert(gmm.Mu.begin(), vDMPTemp.begin(), vDMPTemp.end());
         }
-
-        cout
-
-        // DEBUG print vector
-        for(vector<double>::iterator it = vPriors.begin(); it != vPriors.end(); ++it) {
-            cout << *it;
+        else if (strcmp(name, "Priors") == 0)
+        {
+            vector< vector <mat> > vDMPTemp;
+            for (int i=0; i < mxGetN(matlabInputMatrix); i++) {
+                vector<mat> vTemp;
+                for (int j=0; j < mxGetN(mxGetCell(matlabInputMatrix, i)); j++) {
+                     mxArray *matlabOutputMatrix = mxGetCell(mxGetCell(matlabInputMatrix, i),j);
+                     mat aM = matlab2armadilloMatrix(matlabOutputMatrix);
+                     vTemp.insert(vTemp.end(), aM);
+                }
+                vDMPTemp.insert(vDMPTemp.end(), vTemp);
+                /* test output
+                for(vector<mat>::iterator it = vTemp.begin(); it != vTemp.end(); ++it) {
+                    //(*it).print(cout);
+                }
+                */
+            }
+            gmm.Priors.insert(gmm.Priors.begin(), vDMPTemp.begin(), vDMPTemp.end());
         }
-        */
-
-        //destroy allocated matrix
-
+        else if (strcmp(name, "Priors_Mixtures") == 0)
+        {
+            vector< vector <mat> > vDMPTemp;
+            for (int i=0; i < mxGetN(matlabInputMatrix); i++) {
+                vector<mat> vTemp;
+                mxArray *matlabTempMatrix = mxGetCell(matlabInputMatrix, i);
+                mat aM = matlab2armadilloMatrix(matlabTempMatrix);
+                vTemp.insert(vTemp.end(), aM);
+                vDMPTemp.insert(vDMPTemp.end(), vTemp);
+                /* test output
+                for(vector<mat>::iterator it = vTemp.begin(); it != vTemp.end(); ++it) {
+                    (*it).print(cout);
+                }
+                */
+            }
+            gmm.Priors_mixtures.insert(gmm.Priors_mixtures.begin(), vDMPTemp.begin(), vDMPTemp.end());
+        }
+        else if (strcmp(name, "Sigma2") == 0)
+        {
+            vector< vector <cube> > vDMPTemp;
+            for (int i=0; i < mxGetN(matlabInputMatrix); i++) {
+                vector<cube> vTemp;
+                for (int j=0; j < mxGetN(mxGetCell(matlabInputMatrix, i)); j++) {
+                     mxArray *matlabOutputMatrix = mxGetCell(mxGetCell(matlabInputMatrix, i),j);
+                     cube aC = matlab2armadilloMatrix3D(matlabOutputMatrix);
+                     vTemp.insert(vTemp.end(), aC);
+                }
+                vDMPTemp.insert(vDMPTemp.end(), vTemp);
+                /* test output
+                for(vector<cube>::iterator it = vTemp.begin(); it != vTemp.end(); ++it) {
+                    (*it).print(cout);
+                }
+                */
+            }
+            gmm.Sigma2.insert(gmm.Sigma2.begin(), vDMPTemp.begin(), vDMPTemp.end());
+        }
+        else {
+            cerr << "onlinegmr::readMatlabFile(): Read variable with unknown name from *.mat file!" << endl;
+            exit(EXIT_FAILURE);
+        }
     }
-
-    mxDestroyArray(pa);
-
+    mxDestroyArray(matlabInputMatrix);
     matClose(pmat);
+
+    cout << "Reading GMM was successful!" << endl;
 }
 
-void onlineGMR::writeMatlabFile()
+void onlineGMR::writeMatlabFile() const
 {
     // TODO: Dummy implementation to write to a new matlab file
-
-
     MATFile *pmat;
 
     //create a new mat-file and save some variable/matrix in it
@@ -119,12 +167,78 @@ void onlineGMR::writeMatlabFile()
     mxDestroyArray(B);
 }
 
-void onlineGMR::regression()
+vec calcPDF(vec X, vec Mu, mat Sigma)
 {
+    vec diff = X - Mu;
+    // TODO add as const?
+    double denominator = sqrt(pow(2*M_PI, 3));
 
+    // TODO check exponential function
+    return 1 / (denominator * (det(Sigma))) * arma::exp(-1/2 * diff.t() * Sigma.i()* diff);
 
 }
 
+void onlineGMR::regression(vec X_in /* double s, vec T */)
+{
+    // declare dimensions
+    int nDMP = gmm.Priors.size();
+    int nDemos = gmm.Priors[0].size();
+    int nComponents = gmm.Priors[0][0].n_cols;
+
+    double currFTmp;
+
+    int in[] = {0, 1, 2};
+    mat InvSigma2;
+
+    const int DMP = 0;
+
+    vec h[nComponents];
+
+    // calc sum_priors (scalar, vec only because of return type)
+    vec sumPriors = 0;
+    for (int k=0; k < nComponents; k++) {
+        sumPriors += gmm.Priors[DMP][k] * calcPDF(X_in, gmm.Mu[DMP][k], gmm.Sigma2[DMP][k]);
+    }
+
+    for (int i=0; i < nDemos; i++) {
+        for (int k=0; k < nComponents; k++) {
+
+            // TODO continue here!!!
+            //F = gmm.Mu[DMP][k]
+
+            h[k] = as_scalar((gmm.Priors[DMP][k] * calcPDF(X_in, gmm.Mu[DMP][k], gmm.Sigma2[DMP][k])) / sumPriors);
+        }
+        //InvSigma2 = (gmm.Sigma2[d][in[2]+1][i]).i();
+        //currFTmp = gmm.Mu[d][in[2]+1][i] + gmm.Sigma2[d][in[2]+1][i] * InvSigma2 * ([s,h] - gmm.Mu[d][in][i]);
+
+    }
+
+
+    /*
+    for (int d=0; d < nDMP; d++) {
+        for (int i=0; i < nDemos; i++) {
+            //InvSigma2 = (gmm.Sigma2[d][in[2]+1][i]).i();
+            //currFTmp = gmm.Mu[d][in[2]+1][i] + gmm.Sigma2[d][in[2]+1][i] * InvSigma2 * ([s,h] - gmm.Mu[d][in][i]);
+
+        }
+    }
+    */
+
+    // matlab reference
+    // ----------------------------------------------
+    /*
+    for d=1:nDMP
+            for i=1:length(Priors2{d})
+              currFTmp = Mu2{d}(in(end)+1,i) + Sigma2{d}(in(end)+1,in,i)*inv(Sigma2{d}(in,in,i)) * ([s;h(:,nb)]-Mu2{d}(in,i));
+              rGMR(nb).F(d,n) = rGMR(nb).F(d,n) + rGMR(nb).H(i,n,d) * currFTmp;
+            end
+        end
+    */
+}
+
+
+// calinon reference
+// ---------------------------------------------------------
 /*
 void  GMR::regression(GMM_Model* gmmOut, mat data_in, urowvec in, urowvec out)
 {
