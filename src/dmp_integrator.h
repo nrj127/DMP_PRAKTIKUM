@@ -5,6 +5,7 @@
 #include <iostream>
 #include <mat.h>
 #include <matrix.h>
+#include <vector>
 
 class dmp_integrator
 {
@@ -16,7 +17,7 @@ public:
 
 private:
     char* outputFile="../data/dmp_test.mat";
-    void writeMatlabFile(double* x, int xl, double* s, int sl,double* v, int vl);
+    void writeMatlabFile(std::vector<double>& x, std::vector<double>& v, std::vector<double>& s);
 
     const double tau=1;                 //time constant
     const double dt=.005;               //time step
@@ -27,17 +28,19 @@ private:
     const double alpha=.5;              //decay factor
     const double s_0=1;                 //start value for s
     double s;                     //time variable
-    const int nsteps= 20;//2000;
+    const int nsteps= 2000;//2000;
     double v;
     const double v_0=0;
     double x;
     const double x_0=0;
     const double g=1;     //hardcode that..
+    const double F=0;
 
-    double x_traj[20];
-    double v_traj[20];
-    double s_traj[20];
+    std::vector<int> myvector ;
 
+    std::vector<double> x_traj;
+    std::vector<double> v_traj;
+    std::vector<double> s_traj;
 };
 
 #endif // DMP_INTEGRATOR_H
