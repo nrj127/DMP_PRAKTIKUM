@@ -207,7 +207,6 @@ void onlineGMR::regression(vec X_in /* double s, vec T */)
             // TODO nested loops?
             for (int k=0; k < kComponents; k++) {
                 // invert Sigma Matrix
-                //InvSigma2 = (gmm.Sigma2[dmp][i].submat(0, 0, k, inp_size, inp_size, k)).i();
                 InvSigma2 = gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in).i();
                 // calc current F term
                 currF[k] = as_scalar(gmm.Mu[dmp][i](out, k) + gmm.Sigma2[dmp][i].slice(k).submat(out, 0, out, in) * InvSigma2 * (X_in - gmm.Mu[dmp][i].submat(0,0,in,0)));
@@ -217,7 +216,6 @@ void onlineGMR::regression(vec X_in /* double s, vec T */)
             F[dmp] = sum(h % currF); // % element wise multiplication
             cout << "F of dmp[" << dmp << "], demo[" << i << "] : " << F[dmp] << endl;
         }
-
     }
     debugForcingTerms(F);
 }
