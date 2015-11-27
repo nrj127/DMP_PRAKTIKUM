@@ -167,73 +167,64 @@ void onlineGMR::writeMatlabFile() const
     mxDestroyArray(B);
 }
 
-vec calcPDF(vec X, vec Mu, mat Sigma)
+vec onlineGMR::calcPDF(vec X, vec Mu, mat Sigma)
 {
     vec diff = X - Mu;
+    int dimensions = X.size();
     // TODO add as const?
-    double denominator = sqrt(pow(2*M_PI, 3));
+    double denominator = sqrt(pow(2*M_PI, dimensions));
 
     // TODO check exponential function
-    return 1 / (denominator * (det(Sigma))) * arma::exp(-1/2 * diff.t() * Sigma.i()* diff);
-
+    return 1 / (denominator * (arma::det(Sigma))) * arma::exp(-1/2 * diff.t() * Sigma.i()* diff);
 }
 
 void onlineGMR::regression(vec X_in /* double s, vec T */)
 {
+    // TODO shift all declarations into members --> faster memory allocation
     // declare dimensions
     int nDMP = gmm.Priors.size();
     int nDemos = gmm.Priors[0].size();
-    int nComponents = gmm.Priors[0][0].n_cols;
+    int kComponents = gmm.Priors[0][0].n_cols;
+    int out = gmm.Mu[0][0].n_rows - 1;  // index of output element, usually 3
+    int in = out -1;    // last index of input elements, usually 0 ... 2
 
-    double currFTmp;
+    vec F(nDMP);
 
-    int in[] = {0, 1, 2};
-    mat InvSigma2;
+    vec currF(kComponents);
+    mat InvSigma2(in,in);
+    double sumPriors = 0;
 
-    const int DMP = 0;
+    vec h(kComponents);
 
-    vec h[nComponents];
+    for (int dmp=0; dmp < nDMP; dmp++) {
 
-    // calc sum_priors (scalar, vec only because of return type)
-    vec sumPriors = 0;
-    for (int k=0; k < nComponents; k++) {
-        sumPriors += gmm.Priors[DMP][k] * calcPDF(X_in, gmm.Mu[DMP][k], gmm.Sigma2[DMP][k]);
-    }
-
-    for (int i=0; i < nDemos; i++) {
-        for (int k=0; k < nComponents; k++) {
-
-            // TODO continue here!!!
-            //F = gmm.Mu[DMP][k]
-
-            h[k] = as_scalar((gmm.Priors[DMP][k] * calcPDF(X_in, gmm.Mu[DMP][k], gmm.Sigma2[DMP][k])) / sumPriors);
-        }
-        //InvSigma2 = (gmm.Sigma2[d][in[2]+1][i]).i();
-        //currFTmp = gmm.Mu[d][in[2]+1][i] + gmm.Sigma2[d][in[2]+1][i] * InvSigma2 * ([s,h] - gmm.Mu[d][in][i]);
-
-    }
-
-
-    /*
-    for (int d=0; d < nDMP; d++) {
         for (int i=0; i < nDemos; i++) {
-            //InvSigma2 = (gmm.Sigma2[d][in[2]+1][i]).i();
-            //currFTmp = gmm.Mu[d][in[2]+1][i] + gmm.Sigma2[d][in[2]+1][i] * InvSigma2 * ([s,h] - gmm.Mu[d][in][i]);
-
+            for (int k=0; k < kComponents; k++) {
+                sumPriors += as_scalar(gmm.Priors[dmp][i](k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in)));
+            }
         }
-    }
-    */
+        for (int i=0; i < nDemos; i++) {
+            // TODO nested loops?
+            for (int k=0; k < kComponents; k++) {
+                // invert Sigma Matrix
+                //InvSigma2 = (gmm.Sigma2[dmp][i].submat(0, 0, k, inp_size, inp_size, k)).i();
+                InvSigma2 = gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in).i();
+                // calc current F term
+                currF[k] = as_scalar(gmm.Mu[dmp][i](out, k) + gmm.Sigma2[dmp][i].slice(k).submat(out, 0, out, in) * InvSigma2 * (X_in - gmm.Mu[dmp][i].submat(0,0,in,0)));
+                h[k] = as_scalar((gmm.Priors[dmp][i](0, k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,0,in,0), gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in))) / sumPriors);
+            }
+            // TODO this is overwritten for each Demo, how to handle all Demos?
+            F[dmp] = sum(h % currF); // % element wise multiplication
+            cout << "F of dmp[" << dmp << "], demo[" << i << "] : " << F[dmp] << endl;
+        }
 
-    // matlab reference
-    // ----------------------------------------------
-    /*
-    for d=1:nDMP
-            for i=1:length(Priors2{d})
-              currFTmp = Mu2{d}(in(end)+1,i) + Sigma2{d}(in(end)+1,in,i)*inv(Sigma2{d}(in,in,i)) * ([s;h(:,nb)]-Mu2{d}(in,i));
-              rGMR(nb).F(d,n) = rGMR(nb).F(d,n) + rGMR(nb).H(i,n,d) * currFTmp;
-            end
-        end
-    */
+    }
+    debugForcingTerms(F);
+}
+
+void onlineGMR::debugForcingTerms(vec F)
+{
+    cout << "F: " << endl << F << endl;
 }
 
 

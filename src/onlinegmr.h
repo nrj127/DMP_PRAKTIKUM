@@ -39,9 +39,8 @@ private:
     cube matlab2armadilloMatrix3D(mxArray *matlabMatrix);
 
     GMM gmm;
-
-
-
+    void debugForcingTerms(vec F);
+    vec calcPDF(vec X, vec Mu, mat Sigma);
 public:
     onlineGMR(const char *inputFile, const char *outputFile);
 
