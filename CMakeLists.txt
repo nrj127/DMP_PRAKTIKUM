@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.4.6)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 project(testproject)
 
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
