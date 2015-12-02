@@ -71,7 +71,6 @@ set( sources_frederik
 set( sources_thomas
       src/mainOnlineGmrTest.cpp
       src/onlinegmr.cpp
-      src/mvn.cpp
 )
 
 
@@ -89,8 +88,20 @@ target_link_libraries(mainFRITest_rviz -lFastResearchInterfaceLibrary -lrt)
 rosbuild_add_executable(test_dmp ${sources_frederik})
 target_link_libraries(test_dmp libmat.so libmx.so -larmadillo)
 
-rosbuild_add_executable(maindmpFRI src/maindmpFRI.cpp src/RunTrajectorySimple.cpp ${sources_irml})
-target_link_libraries(maindmpFRI -lFastResearchInterfaceLibrary -lrt)
+rosbuild_add_executable(maindmpFRI
+    src/maindmpFRI.cpp
+    src/RunTrajectorySimple.cpp
+    src/onlinegmr.cpp
+    src/camerahandle.cpp
+    ${sources_irml}
+)
+target_link_libraries(maindmpFRI
+    -lFastResearchInterfaceLibrary
+    -lrt
+    libmat.so # matlab library
+    libmx.so # matlab library
+    -larmadillo
+)
 
 rosbuild_add_executable(mainFRITest ${sources_irml} ${sources_affan})
 target_link_libraries(mainFRITest -lFastResearchInterfaceLibrary -lrt)

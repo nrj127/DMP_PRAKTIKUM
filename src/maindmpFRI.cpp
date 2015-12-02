@@ -13,6 +13,14 @@
 #include <vector>
 #include <OSAbstraction.h>
 
+// includes for dmp project
+#include "onlinegmr.h"
+#include <ctime>
+#include "camerahandle.h"
+
+
+// #include <ar_track_alvar_msgs/AlvarMarkers.h
+
 
 using namespace std;
 
@@ -282,16 +290,55 @@ int main(int argc, char *argv[])
                 // Execute motion
                 int it_  = 0;
                 int dim_ = (int)motion_.size();
+
+                // TODO implementation -----------------------------------------
+
+                ros::init(argc, argv, "listener");
+                ros::NodeHandle n;
+
+                // object to handle camera topic callback
+                CameraHandle Camera;
+
+                ros::Subscriber sub = n.subscribe("av..", 1000, &CameraHandle::callback, &Camera);
+
+                const char* inputFile = "../data/ModelDMPGaussBetaManyData.mat";
+                const char* outputFile = "../data/TestOnlineGmrOutput.mat";
+
+                onlineGMR gmr = onlineGMR(inputFile, outputFile);
+                gmr.readMatlabFile();
+
+                // create vector for 3 DMPs
+                vector<double> F(3);
+                // create dummy vector for X_in
+                vector<double> X_in(3);
+                // create vector for object positions
+                vector<double> obj_pos;
+
                 while ((FRI->IsMachineOK()) && it_<dim_){
                     FRI->WaitForKRCTick();
+
+                    // start time measurement
+                    clock_t begin = clock();
+
+                    // TODO implement dmp and GMR here -----------------------------
+
+                    obj_pos = Camera.getPos();
+
+                    F = gmr.regression(X_in);
+
 
                     for(i=0; i<FRI_CART_FRM_DIM; ++i){
                         commCartPose[i] = motion_[it_][i];
                     }
-
                     FRI->SetCommandedCartPose(commCartPose);
-
                     it_++;
+
+                    ros::spinOnce();
+
+                    // finish time measurement
+                    clock_t end = clock();
+                    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+                    // cout << "Elapsed time for regression function (in ms) : " << elapsed_secs * 1000.0 << endl;
                 }
             }
             printf("Motion completed.\n");

@@ -39,10 +39,20 @@ void onlineGMR::armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix)
     mxSetPr(outputMatrix, values);
 }
 
-void onlineGMR::vector2matlabVector(vector<double> *input, mxArray *outputMatrix)
+void onlineGMR::stdVector2matlabVector(vector<double> *input, mxArray *outputMatrix)
 {
     outputMatrix = mxCreateDoubleMatrix(input->size(), 1, mxREAL);
     mxSetPr(outputMatrix, &(input->at(0)));
+}
+
+vector<double> onlineGMR::armadilloVector2stdVector(mat *armaMatrix)
+{
+
+    vector<double> TempVec(3);
+    for (int i=0; i< armaMatrix->size(); i++) {
+        TempVec[i] = armaMatrix->at(i);
+    }
+    return TempVec;
 }
 
 void onlineGMR::readMatlabFile()
@@ -186,7 +196,7 @@ vec onlineGMR::calcPDF(vec X, vec Mu, mat Sigma)
     return 1 / (denominator * (arma::det(Sigma))) * arma::exp(-1/2 * diff.t() * Sigma.i()* diff);
 }
 
-mat onlineGMR::regression(vec X_in /* double s, vec T */)
+vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
 {
     // TODO shift all declarations into members --> faster memory allocation
     // declare dimensions
@@ -229,7 +239,7 @@ mat onlineGMR::regression(vec X_in /* double s, vec T */)
     }
     // debugForcingTerms(F);
 
-    return F;
+    return armadilloVector2stdVector(&F);
 }
 
 void onlineGMR::debugForcingTerms(vec F)
