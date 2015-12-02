@@ -28,7 +28,6 @@ private:
     const char* inputFile = "../data/ModelDMPGaussBetaManyData.mat";
     void writeMatlabFile(vector<double>& x, vector<double>& v, vector<double>& s);
 
-    //onlineGMR gasdf('outputFile','outputFile');
     const double tau=1;                 //time constant
     const double dt=.005;               //time step
     const double omega_n=30;            //natural frequency

@@ -24,6 +24,8 @@ int main(int argc, char *argv[])
     utility::stdVectorMatrix2matlabMatrix(&integrator1.x_traj,x_traj_mat);
     utility::stdVectorMatrix2matlabMatrix(&integrator1.v_traj,v_traj_mat);
 
+    double data = *mxGetPr(s_traj_mat);
+
     utility::writeMatlabFile(s_traj_mat,"straj","../data/straj.mat");
     utility::writeMatlabFile(x_traj_mat,"xtraj","../data/xtraj.mat");
     utility::writeMatlabFile(v_traj_mat,"vtraj","../data/vtraj.mat");

@@ -13,12 +13,12 @@ void utility::stdVectorMatrix2matlabMatrix(vector < vector<double> > *input, mxA
 
 
     // copy each row to outputMatrix
-    for (int i=0; i < mrows; i++)
+    for (int i=0; i < ncols; i++)
     {
-        memcpy(mxGetPr(outputMatrix) + i*ncols, &(input->at(i).at(0)), sizeof(double) * input->at(0).size());
+        memcpy(mxGetPr(outputMatrix) + i*mrows, &(input->at(0).at(i)), sizeof(double) * mrows);
     }
 
-    //memcpy(mxGetPr(outputMatrix), &input[0][0], sizeof(double) * input->size() * input->at(0).size());
+    // memcpy(mxGetPr(outputMatrix), &input[0][0], sizeof(double) * input->size() * input->at(0).size());
 }
 
 void utility::writeMatlabFile(mat armaMatrix, const char *varname, const char *filename)

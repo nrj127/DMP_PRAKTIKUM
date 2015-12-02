@@ -29,7 +29,7 @@ dmp_integrator::dmp_integrator()
 void dmp_integrator::start_integration()
 {
     //this is the main integration loop for the dmp:
-    int s,v,x;
+    double s,v,x;
     cout << "size of vector s:  " << s_traj.size() <<endl;
     cout << "size of capacity s:  " << s_traj.capacity() <<endl;
     for (int i =0; i< 3; i++)
