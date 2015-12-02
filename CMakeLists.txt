@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 2.4.6)
+
+project(testproject)
+
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 # Set the build type.  Options are:
@@ -84,6 +87,12 @@ target_link_libraries(mainFRITest_rviz -lFastResearchInterfaceLibrary -lrt)
 
 rosbuild_add_executable(test_dmp ${sources_frederik})
 target_link_libraries(test_dmp libmat.so libmx.so -larmadillo)
+
+rosbuild_add_executable(maindmpFRI src/maindmpFRI.cpp src/RunTrajectorySimple.cpp ${sources_irml})
+target_link_libraries(maindmpFRI -lFastResearchInterfaceLibrary -lrt)
+
+rosbuild_add_executable(mainFRITest ${sources_irml} ${sources_affan})
+target_link_libraries(mainFRITest -lFastResearchInterfaceLibrary -lrt)
 
 
 # TODO: TE: how to link which target to which library???
