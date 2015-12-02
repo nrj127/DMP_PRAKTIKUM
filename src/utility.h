@@ -16,6 +16,8 @@ public:
     void stdVectorMatrix2matlabMatrix(vector<vector<double> > *input, mxArray *outputMatrix);
     void writeMatlabFile(mat armaMatrix, const char *name, const char *filename);
     void armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem);
+
+    ~utility();
 };
 
 #endif // UTILITY_H

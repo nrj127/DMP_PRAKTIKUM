@@ -45,3 +45,8 @@ void utility::armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int
     double *dest = mxGetPr(outputMatrix);
     memcpy(dest, src, sizeof(double)*num_elem);
 }
+
+utility::~utility()
+{
+
+}
