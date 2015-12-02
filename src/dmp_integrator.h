@@ -7,6 +7,7 @@
 #include <matrix.h>
 #include <vector>
 #include <armadillo>
+#include "onlinegmr.h"
 
 
 using namespace std;
@@ -17,7 +18,6 @@ public:
     dmp_integrator();
 
     void start_integration(void);
-    void save_traj();
 
 private:
     char* outputFile="../data/3_dmps_int.mat";
@@ -34,13 +34,11 @@ private:
     const double alpha=.5;              //decay factor
     const int nsteps= 2000;//2000;
 
-
-    const vector<double> v_0={0,0,0}; //starting values
-    const vector<double> x_0={0,0,0};
-    const vector<double> s_0={1,1,1};
+    vector<double> v_0;  //starting values
+    vector<double> x_0;
+    vector<double> s_0;
 
     const double g=1;     //hardcode that..
-    const double F=0;
     const double ndmp=3;
 
     vector<int> myvector ;

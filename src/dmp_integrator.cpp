@@ -1,5 +1,5 @@
 #include "dmp_integrator.h"
-#include "onlinegmr.h"
+
 
 //using namespace dmp_integrator;
 using namespace std;
@@ -15,6 +15,10 @@ dmp_integrator::dmp_integrator()
     x_traj.resize( ndmp , vector<double>( nsteps , 0.0 ) );
     v_traj.resize( ndmp , vector<double>( nsteps , 0.0 ) );
     s_traj.resize( ndmp , vector<double>( nsteps , 0.0 ) );
+
+    x_0.resize(ndmp,0);
+    v_0.resize(ndmp,0);
+    s_0.resize(ndmp,1);
 
     /*
     x_traj.insert(x_traj.begin(),l,0.0);   //initialize vectors with zeros
@@ -51,13 +55,15 @@ void dmp_integrator::start_integration()
             v=v_traj[j][i];
             x=x_traj[j][i];
 
-            F=gmr.regression(X_in);
+            vector<double> F_vec;
             X_in[0]=s;
             X_in[1]=0.5;
             X_in[2]=0.5;
+            F_vec=gmr.regression(X_in);
+            int F = F_vec[j];
 
             s_traj[j][i+1] = -dt/tau*alpha*s + s;
-            v_traj[j][i+1] = dt/tau*(K*(g-x) - D*v - K*(g-x_0)*s + s*K*F) + v;
+            v_traj[j][i+1] = dt/tau*(K*(g-x) - D*v - K*(g-x_0[j])*s + s*K*F) + v;
             x_traj[j][i+1] = dt/tau*v + x;
 
             cout << "x: " << x << endl;
@@ -67,46 +73,5 @@ void dmp_integrator::start_integration()
     }
 
     //save to .mat files
-}
-
-void dmp_integrator::writeMatlabFile(std::vector<double>& x, std::vector<double>& s, std::vector<double>& v)
-{
-    // TODO: Dummy implementation to write to a new matlab file
-
-
-    MATFile *pmat;
-
-    //create a new mat-file and save some variable/matrix in it
-    mxArray *X, *S, *V;
-
-    int xl = x.size();
-    int sl = s.size();
-    int vl = v.size();
-
-    X=mxCreateDoubleMatrix(1, xl, mxREAL);
-    S=mxCreateDoubleMatrix(1, sl, mxREAL);
-    V=mxCreateDoubleMatrix(1, vl, mxREAL);
-
-    //copy an array to matrix A and B
-    memcpy(mxGetPr(X), &x[0], xl * sizeof(double));
-    memcpy(mxGetPr(S), &s[0], sl * sizeof(double));
-    memcpy(mxGetPr(V), &v[0], vl * sizeof(double));
-
-    //opening TestVar.mat for writing new data
-    pmat=matOpen(outputFile, "w");
-    matPutVariable(pmat, "X", X);
-    matPutVariable(pmat, "S", S);
-    matPutVariable(pmat, "V", V);
-
-    matClose(pmat);
-
-    mxDestroyArray(X);
-    mxDestroyArray(S);
-    mxDestroyArray(V);
-}
-
-void dmp_integrator::save_traj()
-{
-    writeMatlabFile(x_traj,s_traj,v_traj);
 }
 
