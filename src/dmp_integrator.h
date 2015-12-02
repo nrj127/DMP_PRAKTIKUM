@@ -18,6 +18,9 @@ public:
     dmp_integrator();
 
     void start_integration(void);
+    vector< vector<double> > x_traj;
+    vector< vector<double> > v_traj;
+    vector< vector<double> > s_traj;
 
 private:
     const char* outputFile="../data/3_dmps_int.mat";
@@ -44,9 +47,7 @@ private:
 
     vector<int> myvector ;
 
-    vector< vector<double> > x_traj;
-    vector< vector<double> > v_traj;
-    vector< vector<double> > s_traj;
+
 };
 
 #endif // DMP_INTEGRATOR_H

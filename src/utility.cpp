@@ -46,8 +46,6 @@ void utility::writeMatlabFile(mxArray *matlabMatrix, const char *varname, const 
 
     matPutVariable(pmat, varname, matlabMatrix);
     matClose(pmat);
-
-    mxDestroyArray(matlabMatrix);
 }
 
 void utility::writeMatlabFile(vector<mxArray *> matlabMatrixMulti, const char *filename)

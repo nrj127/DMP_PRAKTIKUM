@@ -47,7 +47,7 @@ void dmp_integrator::start_integration()
 
     for(int i=0; i<nsteps-1; i++)
     {
-        for(int j=0; ndmp < 3; j++)
+        for(int j=0; j < ndmp; j++)
         {
 
             s=s_traj[j][i];
