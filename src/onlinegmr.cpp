@@ -51,6 +51,13 @@ void onlineGMR::stdVectorMatrix2matlabMatrix(vector < vector<double> > *input, m
     int mrows = input->size();
     int ncols = input->at(0).size();
 
+    /*
+    for (int i=0; i < mrows; i++)
+        for (int j=0; j < ncols; j++) {
+
+        }
+    /*
+
     memcpy(mxGetPr(outputMatrix), &input[0][0], sizeof(double) * input->size() * input->at(0).size());
 }
 
