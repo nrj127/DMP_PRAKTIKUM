@@ -51,15 +51,11 @@ public:
 
     void writeMatlabFile() const;
 
-    mat regression(vec X_in);
-
-
-
-
-
+    vector<double> regression(vec X_in);
     virtual ~onlineGMR();
     void armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix);
-    void vector2matlabVector(vector<double> *input, mxArray *outputMatrix);
+    void stdVector2matlabVector(vector<double> *input, mxArray *outputMatrix);
+    vector<double> armadilloVector2stdVector(mat *armaMatrix);
 };
 
 #endif // ONLINEGMR_H
