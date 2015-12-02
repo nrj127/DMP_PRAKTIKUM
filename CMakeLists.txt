@@ -71,6 +71,7 @@ set( sources_frederik
 set( sources_thomas
       src/onlinegmr.cpp
       src/camerahandle.cpp
+      src/utility.cpp
 )
 
 
