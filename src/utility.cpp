@@ -7,7 +7,6 @@ utility::utility()
 
 void utility::stdVectorMatrix2matlabMatrix(vector < vector<double> > *input, mxArray *outputMatrix)
 {
-    // outputMatrix = mxCreateDoubleMatrix(input->size(), input->size()->size(), mxREAL);
 
     int mrows = input->size();
     int ncols = input->at(0).size();
@@ -42,19 +41,49 @@ void utility::writeMatlabFile(mxArray *matlabMatrix, const char *varname, const 
     MATFile *pmat;
 
     pmat=matOpen(filename, "w");
+    if (pmat == NULL)
+        exit(EXIT_FAILURE);
+
     matPutVariable(pmat, varname, matlabMatrix);
     matClose(pmat);
 
     mxDestroyArray(matlabMatrix);
 }
 
+void utility::writeMatlabFile(vector<mxArray *> matlabMatrixMulti, const char *filename)
+{
+    MATFile *pmat;
+
+    pmat=matOpen(filename, "w");
+    if (pmat == NULL)
+        exit(EXIT_FAILURE);
+
+    int i=0;
+    char *varname;
+    for (int i=0; i < matlabMatrixMulti.size(); i++)
+    {
+        sprintf(varname, "%d", i);
+        matPutVariable(pmat, varname, matlabMatrixMulti[i]);
+    }
+    matClose(pmat);
+}
+
 void utility::armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem)
 {
-    int mrows = armaMatrix->n_rows;
-    int ncols = armaMatrix->n_cols;
+    //int mrows = armaMatrix->n_rows;
+    //int ncols = armaMatrix->n_cols;
     double *src = armaMatrix->memptr();
     double *dest = mxGetPr(outputMatrix);
     memcpy(dest, src, sizeof(double)*num_elem);
+}
+
+vector<double> utility::armadilloVector2stdVector(mat *armaMatrix)
+{
+    vector<double> TempVec(3);
+    for (int i=0; i< armaMatrix->size(); i++) {
+        TempVec[i] = armaMatrix->at(i);
+    }
+    return TempVec;
 }
 
 utility::~utility()

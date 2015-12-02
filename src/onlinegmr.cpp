@@ -46,11 +46,10 @@ void onlineGMR::stdVector2matlabVector(vector<double> *input, mxArray *outputMat
 
 void onlineGMR::stdVectorMatrix2matlabMatrix(vector < vector<double> > *input, mxArray *outputMatrix)
 {
-    // outputMatrix = mxCreateDoubleMatrix(input->size(), input->size()->size(), mxREAL);
+    outputMatrix = mxCreateDoubleMatrix(input->size(), input->at(0).size(), mxREAL);
 
     int mrows = input->size();
     int ncols = input->at(0).size();
-
 
     // copy each row to outputMatrix
     for (int i=0; i < mrows; i++)
@@ -155,6 +154,7 @@ void onlineGMR::readMatlabFile()
     cout << "Reading GMM was successful!" << endl;
 }
 
+/*
 void onlineGMR::writeMatlabFile(mat armaMatrix, const char *name)
 {
     MATFile *pmat;
@@ -169,6 +169,7 @@ void onlineGMR::writeMatlabFile(mat armaMatrix, const char *name)
 
     mxDestroyArray(matlabMatrix);
 }
+*/
 
 vec onlineGMR::calcPDF(vec X, vec Mu, mat Sigma)
 {
@@ -225,7 +226,8 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
     }
     // debugForcingTerms(F);
 
-    writeMatlabFile(F, "F");
+    utility::writeMatlabFile(F, "F", outputFile);
+
 
     return armadilloVector2stdVector(&F);
 }

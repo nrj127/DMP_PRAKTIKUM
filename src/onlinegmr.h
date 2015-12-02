@@ -45,22 +45,18 @@ private:
     void debugForcingTerms(vec F);
     vec calcPDF(vec X, vec Mu, mat Sigma);
 
-    utility util;
-
 public:
     onlineGMR(const char *inputFile, const char *outputFile);
-
-
     void readMatlabFile();
 
-    void writeMatlabFile(mat armaMatrix, const char *name);
-
     vector<double> regression(vec vecX);
-    virtual ~onlineGMR();
+
     void armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem);
     void stdVector2matlabVector(vector<double> *input, mxArray *outputMatrix);
     vector<double> armadilloVector2stdVector(mat *armaMatrix);
     void stdVectorMatrix2matlabMatrix(vector<vector<double> > *input, mxArray *outputMatrix);
+
+    virtual ~onlineGMR();
 };
 
 #endif // ONLINEGMR_H
