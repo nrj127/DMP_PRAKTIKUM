@@ -7,6 +7,8 @@
 #include <mat.h>
 #include <matrix.h>
 
+#include <vector>
+
 // #include <matlab.h> to use matlab built in functions
 
 // the matlab library "libmat.lib" has been added to the project in CMakeLists.txt
@@ -18,7 +20,7 @@ using namespace arma;
 typedef struct {
     vector< vector <mat> > Priors;
     vector< vector <mat> > Mu;
-    vector< vector <mat> > Priors_mixtures;
+    vector< mat > Priors_mixtures;
     vector< vector <cube> > Sigma2;
 } GMM;
 
@@ -49,13 +51,15 @@ public:
 
     void writeMatlabFile() const;
 
-    void regression(vec X_in);
+    mat regression(vec X_in);
 
 
 
 
 
     virtual ~onlineGMR();
+    void armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix);
+    void vector2matlabVector(vector<double> *input, mxArray *outputMatrix);
 };
 
 #endif // ONLINEGMR_H

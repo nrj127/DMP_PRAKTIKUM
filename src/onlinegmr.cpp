@@ -1,10 +1,5 @@
 #include "onlinegmr.h"
-
-// TODO necessary?
-#include "mvn.h"
 #include <stdio.h>
-
-
 
 onlineGMR::onlineGMR(const char *inputFile, const char *outputFile) : inputFile(inputFile), outputFile(outputFile)
 {
@@ -34,6 +29,21 @@ cube onlineGMR::matlab2armadilloMatrix3D(mxArray *matlabMatrix)
     return cube(values, mrows, ncols, hslice);
 }
 
+void onlineGMR::armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix)
+{
+    int mrows = armaMatrix->n_rows;
+    int ncols = armaMatrix->n_cols;
+    double *values = armaMatrix->memptr();
+
+    outputMatrix = mxCreateDoubleMatrix(mrows, ncols, mxREAL);
+    mxSetPr(outputMatrix, values);
+}
+
+void onlineGMR::vector2matlabVector(vector<double> *input, mxArray *outputMatrix)
+{
+    outputMatrix = mxCreateDoubleMatrix(input->size(), 1, mxREAL);
+    mxSetPr(outputMatrix, &(input->at(0)));
+}
 
 void onlineGMR::readMatlabFile()
 {
@@ -71,7 +81,7 @@ void onlineGMR::readMatlabFile()
                 }
                 */
             }
-            gmm.Mu.insert(gmm.Mu.begin(), vDMPTemp.begin(), vDMPTemp.end());
+            gmm.Mu.insert(gmm.Mu.end(), vDMPTemp.begin(), vDMPTemp.end());
         }
         else if (strcmp(name, "Priors") == 0)
         {
@@ -90,24 +100,22 @@ void onlineGMR::readMatlabFile()
                 }
                 */
             }
-            gmm.Priors.insert(gmm.Priors.begin(), vDMPTemp.begin(), vDMPTemp.end());
+            gmm.Priors.insert(gmm.Priors.end(), vDMPTemp.begin(), vDMPTemp.end());
         }
         else if (strcmp(name, "Priors_Mixtures") == 0)
         {
-            vector< vector <mat> > vDMPTemp;
+            vector< mat > vDMPTemp;
             for (int i=0; i < mxGetN(matlabInputMatrix); i++) {
-                vector<mat> vTemp;
                 mxArray *matlabTempMatrix = mxGetCell(matlabInputMatrix, i);
                 mat aM = matlab2armadilloMatrix(matlabTempMatrix);
-                vTemp.insert(vTemp.end(), aM);
-                vDMPTemp.insert(vDMPTemp.end(), vTemp);
+                vDMPTemp.insert(vDMPTemp.end(), aM);
                 /* test output
                 for(vector<mat>::iterator it = vTemp.begin(); it != vTemp.end(); ++it) {
                     (*it).print(cout);
                 }
                 */
             }
-            gmm.Priors_mixtures.insert(gmm.Priors_mixtures.begin(), vDMPTemp.begin(), vDMPTemp.end());
+            gmm.Priors_mixtures = vDMPTemp;
         }
         else if (strcmp(name, "Sigma2") == 0)
         {
@@ -126,7 +134,7 @@ void onlineGMR::readMatlabFile()
                 }
                 */
             }
-            gmm.Sigma2.insert(gmm.Sigma2.begin(), vDMPTemp.begin(), vDMPTemp.end());
+            gmm.Sigma2.insert(gmm.Sigma2.end(), vDMPTemp.begin(), vDMPTemp.end());
         }
         else {
             cerr << "onlinegmr::readMatlabFile(): Read variable with unknown name from *.mat file!" << endl;
@@ -178,7 +186,7 @@ vec onlineGMR::calcPDF(vec X, vec Mu, mat Sigma)
     return 1 / (denominator * (arma::det(Sigma))) * arma::exp(-1/2 * diff.t() * Sigma.i()* diff);
 }
 
-void onlineGMR::regression(vec X_in /* double s, vec T */)
+mat onlineGMR::regression(vec X_in /* double s, vec T */)
 {
     // TODO shift all declarations into members --> faster memory allocation
     // declare dimensions
@@ -189,10 +197,12 @@ void onlineGMR::regression(vec X_in /* double s, vec T */)
     int in = out -1;    // last index of input elements, usually 0 ... 2
 
     vec F(nDMP);
+    F.zeros();
 
     vec currF(kComponents);
     mat InvSigma2(in,in);
-    double sumPriors = 0;
+    mat sumPriors(nDMP, nDemos);
+    sumPriors.zeros();
 
     vec h(kComponents);
 
@@ -200,7 +210,7 @@ void onlineGMR::regression(vec X_in /* double s, vec T */)
 
         for (int i=0; i < nDemos; i++) {
             for (int k=0; k < kComponents; k++) {
-                sumPriors += as_scalar(gmm.Priors[dmp][i](k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in)));
+                sumPriors(dmp, i) += as_scalar(gmm.Priors[dmp][i](k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in)));
             }
         }
         for (int i=0; i < nDemos; i++) {
@@ -210,14 +220,16 @@ void onlineGMR::regression(vec X_in /* double s, vec T */)
                 InvSigma2 = gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in).i();
                 // calc current F term
                 currF[k] = as_scalar(gmm.Mu[dmp][i](out, k) + gmm.Sigma2[dmp][i].slice(k).submat(out, 0, out, in) * InvSigma2 * (X_in - gmm.Mu[dmp][i].submat(0,0,in,0)));
-                h[k] = as_scalar((gmm.Priors[dmp][i](0, k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,0,in,0), gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in))) / sumPriors);
+                h[k] = as_scalar((gmm.Priors[dmp][i](0, k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,0,in,0), gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in))) / sumPriors(dmp, i));
             }
-            // TODO this is overwritten for each Demo, how to handle all Demos?
-            F[dmp] = sum(h % currF); // % element wise multiplication
-            cout << "F of dmp[" << dmp << "], demo[" << i << "] : " << F[dmp] << endl;
+            // F[dmp] = sum(h % currF); // % element wise multiplication
+            //cout << "F of dmp[" << dmp << "], demo[" << i << "] : " << F[dmp] << endl;
+            F[dmp] += gmm.Priors_mixtures[dmp][i] * sum(h % currF);
         }
     }
-    debugForcingTerms(F);
+    // debugForcingTerms(F);
+
+    return F;
 }
 
 void onlineGMR::debugForcingTerms(vec F)

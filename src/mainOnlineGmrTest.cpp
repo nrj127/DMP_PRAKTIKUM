@@ -12,18 +12,26 @@ int main(int argc, char* argv[]) {
 
     vec X_in(3);
     X_in[0] = 1;
-    X_in[1] = 2;
-    X_in[2] = 3;
+    X_in[1] = 100.0;
+    X_in[2] = 50.0;
 
-    // start time measurement
-    clock_t begin = clock();
+    vec F(3);
 
-    gmr.regression(X_in);
+    while (X_in(0) >= 0) {
 
-    // finish time measurement
-    clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    cout << "Elapsed time for regression function (in ms) : " << elapsed_secs * 1000.0 << endl;
+        X_in(0) -= 0.1;
+
+        // start time measurement
+        clock_t begin = clock();
+        F = gmr.regression(X_in);
+
+        cout << F(1) << ' ';
+
+        // finish time measurement
+        clock_t end = clock();
+        double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+        // cout << "Elapsed time for regression function (in ms) : " << elapsed_secs * 1000.0 << endl;
+    }
 
     //gmr.writeMatlabFile();
 
