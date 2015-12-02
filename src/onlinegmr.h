@@ -8,6 +8,7 @@
 #include <matrix.h>
 #include <string>
 #include <vector>
+#include "utility.h"
 
 // #include <matlab.h> to use matlab built in functions
 
@@ -43,6 +44,8 @@ private:
     GMM gmm;
     void debugForcingTerms(vec F);
     vec calcPDF(vec X, vec Mu, mat Sigma);
+
+    utility util;
 
 public:
     onlineGMR(const char *inputFile, const char *outputFile);
