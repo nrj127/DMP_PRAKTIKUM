@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     dmp_integrator integrator1;
 
     integrator1.start_integration();
-    integrator1.save_traj();
+    //integrator1.save_traj();
 
     return 0;
 }

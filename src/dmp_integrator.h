@@ -6,6 +6,10 @@
 #include <mat.h>
 #include <matrix.h>
 #include <vector>
+#include <armadillo>
+
+
+using namespace std;
 
 class dmp_integrator
 {
@@ -16,8 +20,10 @@ public:
     void save_traj();
 
 private:
-    char* outputFile="../data/dmp_test.mat";
-    void writeMatlabFile(std::vector<double>& x, std::vector<double>& v, std::vector<double>& s);
+    char* outputFile="../data/3_dmps_int.mat";
+    char* gmr_outFile=".";  //not used
+    const char* inputFile = "../data/ModelDMPGaussBetaManyData.mat";
+    void writeMatlabFile(vector<double>& x, vector<double>& v, vector<double>& s);
 
     const double tau=1;                 //time constant
     const double dt=.005;               //time step
@@ -26,21 +32,22 @@ private:
     const double D=2*zeta*omega_n;      //damping
     double K;           //spring
     const double alpha=.5;              //decay factor
-    const double s_0=1;                 //start value for s
-    double s;                     //time variable
     const int nsteps= 2000;//2000;
-    double v;
-    const double v_0=0;
-    double x;
-    const double x_0=0;
+
+
+    const vector<double> v_0={0,0,0}; //starting values
+    const vector<double> x_0={0,0,0};
+    const vector<double> s_0={1,1,1};
+
     const double g=1;     //hardcode that..
     const double F=0;
+    const double ndmp=3;
 
-    std::vector<int> myvector ;
+    vector<int> myvector ;
 
-    std::vector<double> x_traj;
-    std::vector<double> v_traj;
-    std::vector<double> s_traj;
+    vector< vector<double> > x_traj;
+    vector< vector<double> > v_traj;
+    vector< vector<double> > s_traj;
 };
 
 #endif // DMP_INTEGRATOR_H

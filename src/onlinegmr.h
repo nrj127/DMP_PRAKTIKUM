@@ -43,6 +43,7 @@ private:
     GMM gmm;
     void debugForcingTerms(vec F);
     vec calcPDF(vec X, vec Mu, mat Sigma);
+
 public:
     onlineGMR(const char *inputFile, const char *outputFile);
 
