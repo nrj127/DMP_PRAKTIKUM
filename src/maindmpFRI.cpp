@@ -18,10 +18,6 @@
 #include <ctime>
 #include "camerahandle.h"
 
-
-// #include <ar_track_alvar_msgs/AlvarMarkers.h
-
-
 using namespace std;
 
 #ifndef PI
