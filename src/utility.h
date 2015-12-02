@@ -14,8 +14,9 @@ class utility
 public:
     utility();
     void stdVectorMatrix2matlabMatrix(vector<vector<double> > *input, mxArray *outputMatrix);
-    void writeMatlabFile(mat armaMatrix, const char *name, const char *filename);
-    void armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem);
+    static void writeMatlabFile(mat armaMatrix, const char *varname, const char *filename);
+    static void writeMatlabFile(mxArray *matlabMatrix, const char *varname, const char *filename);
+    static void armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem);
 
     ~utility();
 };

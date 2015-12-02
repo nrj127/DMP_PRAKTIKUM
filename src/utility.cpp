@@ -22,7 +22,7 @@ void utility::stdVectorMatrix2matlabMatrix(vector < vector<double> > *input, mxA
     //memcpy(mxGetPr(outputMatrix), &input[0][0], sizeof(double) * input->size() * input->at(0).size());
 }
 
-void utility::writeMatlabFile(mat armaMatrix, const char *name, const char *filename)
+void utility::writeMatlabFile(mat armaMatrix, const char *varname, const char *filename)
 {
     MATFile *pmat;
     mxArray *matlabMatrix;
@@ -31,7 +31,18 @@ void utility::writeMatlabFile(mat armaMatrix, const char *name, const char *file
     armadillo2matlabMatrix(&armaMatrix, matlabMatrix, armaMatrix.n_elem);
 
     pmat=matOpen(filename, "w");
-    matPutVariable(pmat, name, matlabMatrix);
+    matPutVariable(pmat, varname, matlabMatrix);
+    matClose(pmat);
+
+    mxDestroyArray(matlabMatrix);
+}
+
+void utility::writeMatlabFile(mxArray *matlabMatrix, const char *varname, const char *filename)
+{
+    MATFile *pmat;
+
+    pmat=matOpen(filename, "w");
+    matPutVariable(pmat, varname, matlabMatrix);
     matClose(pmat);
 
     mxDestroyArray(matlabMatrix);
