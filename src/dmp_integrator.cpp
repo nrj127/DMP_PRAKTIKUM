@@ -1,6 +1,5 @@
 #include "dmp_integrator.h"
 
-
 //using namespace dmp_integrator;
 using namespace std;
 using namespace arma;

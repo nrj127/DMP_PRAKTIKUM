@@ -61,18 +61,16 @@ set( sources_irml
 )
 
 set( sources_affan
-     src/mainFRITest.cpp
      src/RunTrajectorySimple.cpp
 )
 
 set( sources_frederik
      src/dmp_integrator.cpp
-     src/test_dmp_integrator.cpp
 )
 
 set( sources_thomas
-      src/mainOnlineGmrTest.cpp
       src/onlinegmr.cpp
+      src/camerahandle.cpp
 )
 
 
@@ -87,16 +85,12 @@ target_link_libraries(mainFRITest -lFastResearchInterfaceLibrary -lrt)
 rosbuild_add_executable(mainFRITest_rviz ${sources_irml} src/mainFRITest_rviz.cpp src/RunTrajectorySimple.cpp)
 target_link_libraries(mainFRITest_rviz -lFastResearchInterfaceLibrary -lrt)
 
-rosbuild_add_executable(test_dmp ${sources_frederik})
-target_link_libraries(test_dmp libmat.so libmx.so -larmadillo)
+rosbuild_add_executable(test_dmp  src/test_dmp_integrator  ${sources_thomas} ${sources_frederik})
+target_link_libraries(test_dmp libmat.so libmx.so -larmadillo -lrt)
 
-rosbuild_add_executable(maindmpFRI
-    src/maindmpFRI.cpp
-    src/RunTrajectorySimple.cpp
-    src/onlinegmr.cpp
-    src/camerahandle.cpp
-    ${sources_irml}
-)
+rosbuild_add_executable(maindmpFRI src/maindmpFRI.cpp ${sources_thomas} ${sources_frederik} ${sources_irml} ${sources_affan})
+
+
 target_link_libraries(maindmpFRI
     -lFastResearchInterfaceLibrary
     -lrt
@@ -105,14 +99,14 @@ target_link_libraries(maindmpFRI
     -larmadillo
 )
 
-rosbuild_add_executable(mainFRITest ${sources_irml} ${sources_affan})
+rosbuild_add_executable(mainFRITest  src/mainFRITest.cpp ${sources_irml} ${sources_affan})
 target_link_libraries(mainFRITest -lFastResearchInterfaceLibrary -lrt)
 
 
 # TODO: TE: how to link which target to which library???
 #target_link_libraries(pbd ${ARMADILLO_LIBRARIES})
 #target_link_libraries(pbd ${Matlab_LIBRARIES})
-add_executable(mainOnlineGmrTest ${sources_thomas})
+add_executable(mainOnlineGmrTest src/mainOnlineGmrTest.cpp ${sources_thomas})
 target_link_libraries(mainOnlineGmrTest libmat.so libmx.so -larmadillo)
 # other matlab libs: libmx.lib libmatlb.lib libmmfile.lib
 
