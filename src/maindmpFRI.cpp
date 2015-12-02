@@ -289,13 +289,13 @@ int main(int argc, char *argv[])
 
                 // TODO implementation -----------------------------------------
 
-                ros::init(argc, argv, "listener");
+                ros::init(argc, argv, "dmp_listener");
                 ros::NodeHandle n;
 
                 // object to handle camera topic callback
                 CameraHandle Camera;
 
-                ros::Subscriber sub = n.subscribe("av..", 1000, &CameraHandle::callback, &Camera);
+                ros::Subscriber sub = n.subscribe("/ar_pose_marker", 1000, &CameraHandle::callback, &Camera);
 
                 const char* inputFile = "../data/ModelDMPGaussBetaManyData.mat";
                 const char* outputFile = "../data/TestOnlineGmrOutput.mat";
@@ -321,7 +321,6 @@ int main(int argc, char *argv[])
                     obj_pos = Camera.getPos();
 
                     F = gmr.regression(X_in);
-
 
                     for(i=0; i<FRI_CART_FRM_DIM; ++i){
                         commCartPose[i] = motion_[it_][i];
