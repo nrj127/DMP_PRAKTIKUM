@@ -44,8 +44,6 @@ void utility::writeMatlabFile(mxArray *matlabMatrix, const char *varname, const 
     pmat=matOpen(filename, "w");
     matPutVariable(pmat, varname, matlabMatrix);
     matClose(pmat);
-
-    mxDestroyArray(matlabMatrix);
 }
 
 void utility::armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem)
