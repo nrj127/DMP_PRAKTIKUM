@@ -21,3 +21,18 @@ void utility::stdVectorMatrix2matlabMatrix(vector < vector<double> > *input, mxA
 
     //memcpy(mxGetPr(outputMatrix), &input[0][0], sizeof(double) * input->size() * input->at(0).size());
 }
+
+void utility::writeMatlabFile(mat armaMatrix, const char *name)
+{
+    MATFile *pmat;
+    mxArray *matlabMatrix;
+
+    matlabMatrix = mxCreateDoubleMatrix(armaMatrix.n_rows, armaMatrix.n_cols, mxREAL);
+    armadillo2matlabMatrix(&armaMatrix, matlabMatrix, armaMatrix.n_elem);
+
+    pmat=matOpen(outputFile, "w");
+    matPutVariable(pmat, name, matlabMatrix);
+    matClose(pmat);
+
+    mxDestroyArray(matlabMatrix);
+}

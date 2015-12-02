@@ -13,6 +13,7 @@ class utility
 public:
     utility();
     void stdVectorMatrix2matlabMatrix(vector<vector<double> > *input, mxArray *outputMatrix);
+    void writeMatlabFile(mat armaMatrix, const char *name);
 };
 
 #endif // UTILITY_H
