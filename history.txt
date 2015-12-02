@@ -13,3 +13,6 @@ cmake ..
 make
 sudo make install
 #################################
+Script Affan:
+demoaffan7IncompleteDataReformulatedTwoTasksKukaICRA2.m
+################################
