@@ -43,6 +43,8 @@ void dmp_integrator::start_integration()
 
     onlineGMR gmr = onlineGMR(inputFile, outputFile);
 
+    gmr.readMatlabFile();
+
     vec X_in(3);
 
     for(int i=0; i<nsteps-1; i++)
@@ -65,9 +67,11 @@ void dmp_integrator::start_integration()
             v_traj[j][i+1] = dt/tau*(K*(g-x) - D*v - K*(g-x_0[j])*s + s*K*F) + v;
             x_traj[j][i+1] = dt/tau*v + x;
 
+            /*
             cout << "x: " << x << endl;
             cout << "v: " << v << endl;
             cout << "s: " << s << endl;
+            */
         }
     }
 

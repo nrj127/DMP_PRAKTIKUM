@@ -56,7 +56,6 @@ void utility::writeMatlabFile(vector<mxArray *> matlabMatrixMulti, const char *f
     if (pmat == NULL)
         exit(EXIT_FAILURE);
 
-    int i=0;
     char *varname;
     for (int i=0; i < matlabMatrixMulti.size(); i++)
     {
