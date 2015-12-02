@@ -71,7 +71,7 @@ set( sources_frederik
 set( sources_thomas
       src/mainOnlineGmrTest.cpp
       src/onlinegmr.cpp
-      src/mvn.cpp
+      #src/mvn.cpp
 )
 
 

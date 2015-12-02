@@ -1,5 +1,5 @@
 #include "dmp_integrator.h"
-
+#include "onlinegmr.h"
 
 //using namespace dmp_integrator;
 using namespace std;
@@ -11,7 +11,7 @@ dmp_integrator::dmp_integrator()
 
     std::vector<double>::size_type l = nsteps;
 
-    x_traj.insert(x_traj.begin(),l,0.0);
+    x_traj.insert(x_traj.begin(),l,0.0);   //initialize vectors with zeros
     v_traj.insert(v_traj.begin(),l,0.0);
     s_traj.insert(s_traj.begin(),l,0.0);
 
@@ -27,13 +27,16 @@ void dmp_integrator::start_integration()
     v_traj.at(0)=v_0;
     x_traj.at(0)=x_0;
 
+    onlineGMR gmr = onlineGMR(inputFile, outputFile);
+
     for(int i=0; i<nsteps-1; i++)
     {
         s=s_traj.at(i);
         v=v_traj.at(i);
         x=x_traj.at(i);
 
-        //F=gmr(s,taskp_vector)
+
+        F=gmr(s,taskp_vector)
 
         s_traj.at(i+1) = -dt/tau*alpha*s + s;
         v_traj.at(i+1) = dt/tau*(K*(g-x) - D*v - K*(g-x_0)*s + s*K*F) + v;
