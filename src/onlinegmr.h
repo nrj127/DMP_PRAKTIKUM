@@ -6,7 +6,7 @@
 #include <armadillo>
 #include <mat.h>
 #include <matrix.h>
-
+#include <string>
 #include <vector>
 
 // #include <matlab.h> to use matlab built in functions
@@ -50,13 +50,14 @@ public:
 
     void readMatlabFile();
 
-    void writeMatlabFile() const;
+    void writeMatlabFile(mat armaMatrix, const char *name);
 
-    vector<double> regression(vec X_in);
+    vector<double> regression(vec vecX);
     virtual ~onlineGMR();
-    void armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix);
+    void armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem);
     void stdVector2matlabVector(vector<double> *input, mxArray *outputMatrix);
     vector<double> armadilloVector2stdVector(mat *armaMatrix);
+    void stdVectorMatrix2matlabMatrix(vector<vector<double> > *input, mxArray *outputMatrix);
 };
 
 #endif // ONLINEGMR_H

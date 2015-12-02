@@ -12,8 +12,8 @@ int main(int argc, char* argv[]) {
 
     vec X_in(3);
     X_in[0] = 1;
-    X_in[1] = 100.0;
-    X_in[2] = 50.0;
+    X_in[1] = 0.5;
+    X_in[2] = 0.3;
 
     vec F(3);
 
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
         clock_t begin = clock();
         F = gmr.regression(X_in);
 
-        cout << F(1) << ' ';
+        cout << F(2) << ' ';
 
         // finish time measurement
         clock_t end = clock();
