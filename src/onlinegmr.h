@@ -32,14 +32,13 @@ private:
     const char* inputFile;
     const char* outputFile;
 
-    static const char FIRST_LEVEL_DIMENSIONS = 9;
-    static const char SIGMA_DIM_M = 4;
-    static const char SIGMA_DIM_N = 4;
+    //static const char FIRST_LEVEL_DIMENSIONS = 9;
+    //static const char SIGMA_DIM_M = 4;
+    //static const char SIGMA_DIM_N = 4;
+    //static const char SIGMA_DIM_O = 25;
 
-    static const char SIGMA_DIM_O = 25;
-
-    mat matlab2armadilloMatrix(mxArray *matlabMatrix);
-    cube matlab2armadilloMatrix3D(mxArray *matlabMatrix);
+    //mat matlab2armadilloMatrix(mxArray *matlabMatrix);
+    //cube matlab2armadilloMatrix3D(mxArray *matlabMatrix);
 
     GMM gmm;
     void debugForcingTerms(vec F);
@@ -48,13 +47,7 @@ private:
 public:
     onlineGMR(const char *inputFile, const char *outputFile);
     void readMatlabFile();
-
     vector<double> regression(vec vecX);
-
-    void armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem);
-    void stdVector2matlabVector(vector<double> *input, mxArray *outputMatrix);
-    vector<double> armadilloVector2stdVector(mat *armaMatrix);
-    void stdVectorMatrix2matlabMatrix(vector<vector<double> > *input, mxArray *outputMatrix);
 
     virtual ~onlineGMR();
 };

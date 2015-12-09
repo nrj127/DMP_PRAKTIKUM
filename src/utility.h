@@ -18,9 +18,13 @@ public:
     static void writeMatlabFile(mxArray *matlabMatrix, const char *varname, const char *filename);
     static void armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem);
     static vector<double> armadilloVector2stdVector(mat *armaMatrix);
+    static void writeMatlabFile(vector< mxArray* > matlabMatrixMulti, const char *filename);
+    static void stdVector2matlabVector(vector<double> *input, mxArray *outputMatrix);
 
     ~utility();
-    void writeMatlabFile(vector< mxArray* > matlabMatrixMulti, const char *filename);
+
+    static mat matlab2armadilloMatrix(mxArray *matlabMatrix);
+    static cube matlab2armadilloMatrix3D(mxArray *matlabMatrix);
 };
 
 #endif // UTILITY_H
