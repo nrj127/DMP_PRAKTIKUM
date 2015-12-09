@@ -17,7 +17,6 @@ const double dmp_integrator::D=2*zeta*omega_n;      //damping
 const double dmp_integrator::alpha=.5;              //decay factor
 const int dmp_integrator::nsteps= 2000;//2000;
 
-const double dmp_integrator::g=1;     //hardcode that..
 const double dmp_integrator::ndmp=3;
 
 dmp_integrator::dmp_integrator()

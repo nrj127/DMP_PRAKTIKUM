@@ -43,8 +43,6 @@ private:
     vector<double> x_0;
     vector<double> s_0;
 
-
-    static const double g;
     static const double ndmp;
 
     vector<double> g;     //end poses
