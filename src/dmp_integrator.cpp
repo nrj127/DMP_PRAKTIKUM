@@ -18,7 +18,8 @@ dmp_integrator::dmp_integrator()
     v_0.resize(ndmp,0);
     s_0.resize(ndmp,1);
 
-    x_0={-0.521055939000000,-0.285697768600000, 2.33119239481157 };
+    x_0 ={-0.521055939000000,-0.285697768600000, 2.33119239481157 };  //inital pose
+    g = {-0.518771839625202, 0.241740713536797 , 2.36155119110486}; //end pose
 
     h_task[0] = -0.4105;
     h_task[1] =  0.0552;
@@ -67,8 +68,10 @@ void dmp_integrator::start_integration()
             F_vec=gmr.regression(X_in);
             int F = F_vec[j];
 
+            //F=0; // for testing!
+
             s_traj[j][i+1] = -dt/tau*alpha*s + s;
-            v_traj[j][i+1] = dt/tau*(K*(g-x) - D*v - K*(g-x_0[j])*s + s*K*F) + v;
+            v_traj[j][i+1] = dt/tau*(K*(g[j]-x) - D*v - K*(g[j]-x_0[j])*s + s*K*F) + v;
             x_traj[j][i+1] = dt/tau*v + x;
 
             /*

@@ -25,7 +25,7 @@ public:
 private:
     const char* outputFile="../data/3_dmps_int.mat";
     const char* gmr_outFile=".";  //not used
-    const char* inputFile = "../data/ModelDMPGaussBetaManyData.mat";
+    const char* inputFile = "../data/ModelDMPGaussBetaManyData3.mat";
     void writeMatlabFile(vector<double>& x, vector<double>& v, vector<double>& s);
 
     const double tau=1;                 //time constant
@@ -35,7 +35,7 @@ private:
     const double D=2*zeta*omega_n;      //damping
     double K;           //spring
     const double alpha=.5;              //decay factor
-    const int nsteps= 2000;//2000;
+    const int nsteps= 2100;//2000;
 
     double h_task[2];
 
@@ -43,7 +43,7 @@ private:
     vector<double> x_0;
     vector<double> s_0;
 
-    const double g=1;     //hardcode that..
+    vector<double> g;     //end poses
     const double ndmp=3;
 
     vector<int> myvector ;
