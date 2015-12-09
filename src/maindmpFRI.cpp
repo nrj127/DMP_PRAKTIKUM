@@ -293,9 +293,9 @@ int main(int argc, char *argv[])
                 ros::NodeHandle n;
 
                 // object to handle camera topic callback
-                CameraHandle Camera;
+                //CameraHandle Camera;
 
-                ros::Subscriber sub = n.subscribe("/ar_pose_marker", 1000, &CameraHandle::callback, &Camera);
+                //ros::Subscriber sub = n.subscribe("/ar_pose_marker", 1000, &CameraHandle::callback, &Camera);
 
                 const char* inputFile = "../data/ModelDMPGaussBetaManyData.mat";
                 const char* outputFile = "../data/TestOnlineGmrOutput.mat";
@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
 
                     // TODO implement dmp and GMR here -----------------------------
 
-                    obj_pos = Camera.getPos();
+                    //obj_pos = Camera.getPos();
 
                     F = gmr.regression(X_in);
 

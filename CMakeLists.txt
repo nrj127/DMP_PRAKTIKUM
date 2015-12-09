@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.4.6)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 project(testproject)
 
@@ -32,19 +32,20 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #rosbuild_gensrv()
 
 set(INCLUDE_FRI utility/FRILibrary/include)
-set(LIB_FRI utility/FRILibrary/Linux/x64/release/lib)
+#set(LIB_FRI utility/FRILibrary/Linux/x64/release/lib)
+set(LIB_FRI $ENV{COTESYS_LWR_DIR}/FRILibrary/Linux/x86/release/lib)
 set(SOURCES_FRI utility/FRILibrary/src)
-set(MATLAB_INCLUDE_DIR /usr/local/MATLAB/R2015b/extern/include)
-set(MATLAB_LIBRARIES /usr/local/MATLAB/R2015b/bin/glnxa64)
+set(MATLAB_INCLUDE_DIR /usr/local/MATLAB/R2011b/extern/include)
+set(MATLAB_LIBRARIES /usr/local/MATLAB/R2011b/bin/glnx86)
 
 
 include_directories(
     include
+    /opt/ros/fuerte/stacks/ar_track_alvar/msg_gen/cpp/include/ar_track_alvar
     ${INCLUDE_FRI}
     ${ARMADILLO_INCLUDE_DIRS}
     ${MATLAB_INCLUDE_DIR}
 )
-
 
 link_directories(
     ${LIB_FRI}
