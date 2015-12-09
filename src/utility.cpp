@@ -1,10 +1,5 @@
 #include "utility.h"
 
-utility::utility()
-{
-
-}
-
 void utility::stdVectorMatrix2matlabMatrix(vector < vector<double> > *input, mxArray *outputMatrix)
 {
     int mrows = input->size();
@@ -67,6 +62,7 @@ void utility::writeMatlabFile(mxArray *matlabMatrix, const char *varname, const 
     matClose(pmat);
 }
 
+/*
 void utility::writeMatlabFile(vector<mxArray *> matlabMatrixMulti, const char *filename)
 {
     MATFile *pmat;
@@ -76,13 +72,14 @@ void utility::writeMatlabFile(vector<mxArray *> matlabMatrixMulti, const char *f
         exit(EXIT_FAILURE);
 
     char *varname;
-    for (int i=0; i < matlabMatrixMulti.size(); i++)
+    for (unsigned int i=0; i < matlabMatrixMulti.size(); i++)
     {
         sprintf(varname, "%d", i);
         matPutVariable(pmat, varname, matlabMatrixMulti[i]);
     }
     matClose(pmat);
 }
+*/
 
 void utility::armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem)
 {
@@ -96,7 +93,7 @@ void utility::armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int
 vector<double> utility::armadilloVector2stdVector(mat *armaMatrix)
 {
     vector<double> TempVec(3);
-    for (int i=0; i< armaMatrix->size(); i++) {
+    for (unsigned int i=0; i< armaMatrix->size(); i++) {
         TempVec[i] = armaMatrix->at(i);
     }
     return TempVec;
@@ -106,9 +103,4 @@ void utility::stdVector2matlabVector(vector<double> *input, mxArray *outputMatri
 {
     outputMatrix = mxCreateDoubleMatrix(input->size(), 1, mxREAL);
     mxSetPr(outputMatrix, &(input->at(0)));
-}
-
-utility::~utility()
-{
-
 }
