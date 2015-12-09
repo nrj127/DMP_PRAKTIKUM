@@ -6,7 +6,6 @@
 #include <mat.h>
 #include <matrix.h>
 #include <vector>
-#include <armadillo>
 #include "onlinegmr.h"
 
 
@@ -26,6 +25,7 @@ private:
     static const char* outputFile;
     static const char* gmr_outFile;
     static const char* inputFile;
+
     void writeMatlabFile(vector<double>& x, vector<double>& v, vector<double>& s);
 
     static const double tau;
@@ -43,8 +43,11 @@ private:
     vector<double> x_0;
     vector<double> s_0;
 
+
     static const double g;
     static const double ndmp;
+
+    vector<double> g;     //end poses
 
     vector<int> myvector ;
 

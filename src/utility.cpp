@@ -8,7 +8,8 @@ void utility::stdVectorMatrix2matlabMatrix(vector < vector<double> > *input, mxA
     // copy each row to outputMatrix
     for (int i=0; i < ncols; i++)
     {
-        memcpy(mxGetPr(outputMatrix) + i*mrows, &(input->at(0).at(i)), sizeof(double) * mrows);
+        for(int j=0; j< mrows; j++)
+            memcpy(mxGetPr(outputMatrix) + i*mrows + j, &(input->at(j).at(i)), sizeof(double));
     }
 }
 
