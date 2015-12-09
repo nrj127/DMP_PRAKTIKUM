@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
         // finish time measurement
         clock_t end = clock();
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        cout << "Elapsed time for regression function (in ms) : " << elapsed_secs * 1000.0 << endl;
+        cout << "Elapsed time (in ms) : " << elapsed_secs * 1000.0 << endl;
     }
 
     //gmr.writeMatlabFile();

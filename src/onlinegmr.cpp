@@ -90,23 +90,6 @@ void onlineGMR::readMatlabFile()
     cout << "Reading GMM was successful!" << endl;
 }
 
-/*
-void onlineGMR::writeMatlabFile(mat armaMatrix, const char *name)
-{
-    MATFile *pmat;
-    mxArray *matlabMatrix;
-
-    matlabMatrix = mxCreateDoubleMatrix(armaMatrix.n_rows, armaMatrix.n_cols, mxREAL);
-    armadillo2matlabMatrix(&armaMatrix, matlabMatrix, armaMatrix.n_elem);
-
-    pmat=matOpen(outputFile, "w");
-    matPutVariable(pmat, name, matlabMatrix);
-    matClose(pmat);
-
-    mxDestroyArray(matlabMatrix);
-}
-*/
-
 vec onlineGMR::calcPDF(vec X, vec Mu, mat Sigma)
 {
     vec diff = X - Mu;
@@ -166,7 +149,7 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
 
 void onlineGMR::debugForcingTerms(vec F)
 {
-    cout << "F: " << endl << F << endl;
+    cout << F << endl;
 }
 
 onlineGMR::~onlineGMR()
