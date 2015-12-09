@@ -12,8 +12,8 @@ int main(int argc, char* argv[]) {
 
     vec X_in(3);
     X_in[0] = 1;
-    X_in[1] = 0.5;
-    X_in[2] = 0.3;
+    X_in[1] = 1;
+    X_in[2] = 1;
 
     vec F(3);
 
