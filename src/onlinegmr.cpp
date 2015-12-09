@@ -6,70 +6,6 @@ onlineGMR::onlineGMR(const char *inputFile, const char *outputFile) : inputFile(
     GMM gmm;
 }
 
-//creates an armadillo matrix from a matlab matrix
-mat onlineGMR::matlab2armadilloMatrix(mxArray *matlabMatrix)
-{
-    mwSize mrows = mxGetM(matlabMatrix);
-    mwSize ncols = mxGetN(matlabMatrix);
-
-    double *values = mxGetPr(matlabMatrix);
-
-    return mat(values, mrows, ncols);
-}
-
-//creates a 3D armadillo matrix from a 3D matlab matrix
-cube onlineGMR::matlab2armadilloMatrix3D(mxArray *matlabMatrix)
-{
-    int mrows = mxGetDimensions(matlabMatrix)[0];
-    int ncols = mxGetDimensions(matlabMatrix)[1];
-    int hslice = mxGetDimensions(matlabMatrix)[2];
-
-    double *values = mxGetPr(matlabMatrix);
-
-    return cube(values, mrows, ncols, hslice);
-}
-
-void onlineGMR::armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem)
-{
-    int mrows = armaMatrix->n_rows;
-    int ncols = armaMatrix->n_cols;
-    double *src = armaMatrix->memptr();
-    double *dest = mxGetPr(outputMatrix);
-    memcpy(dest, src, sizeof(double)*num_elem);
-}
-
-void onlineGMR::stdVector2matlabVector(vector<double> *input, mxArray *outputMatrix)
-{
-    outputMatrix = mxCreateDoubleMatrix(input->size(), 1, mxREAL);
-    mxSetPr(outputMatrix, &(input->at(0)));
-}
-
-void onlineGMR::stdVectorMatrix2matlabMatrix(vector < vector<double> > *input, mxArray *outputMatrix)
-{
-    outputMatrix = mxCreateDoubleMatrix(input->size(), input->at(0).size(), mxREAL);
-
-    int mrows = input->size();
-    int ncols = input->at(0).size();
-
-    // copy each row to outputMatrix
-    for (int i=0; i < mrows; i++)
-    {
-        memcpy(mxGetPr(outputMatrix) + i*ncols, &(input->at(i).at(0)), sizeof(double) * input->at(0).size());
-    }
-
-    //memcpy(mxGetPr(outputMatrix), &input[0][0], sizeof(double) * input->size() * input->at(0).size());
-}
-
-vector<double> onlineGMR::armadilloVector2stdVector(mat *armaMatrix)
-{
-
-    vector<double> TempVec(3);
-    for (int i=0; i< armaMatrix->size(); i++) {
-        TempVec[i] = armaMatrix->at(i);
-    }
-    return TempVec;
-}
-
 void onlineGMR::readMatlabFile()
 {
     MATFile *pmat;
@@ -94,11 +30,11 @@ void onlineGMR::readMatlabFile()
         if (strcmp(name, "Mu") == 0)
         {
             vector< vector <mat> > vDMPTemp;
-            for (int i=0; i < mxGetN(matlabInputMatrix); i++) {
+            for (unsigned int i=0; i < mxGetN(matlabInputMatrix); i++) {
                 vector<mat> vTemp;
-                for (int j=0; j < mxGetN(mxGetCell(matlabInputMatrix, i)); j++) {
+                for (unsigned int j=0; j < mxGetN(mxGetCell(matlabInputMatrix, i)); j++) {
                      mxArray *matlabOutputMatrix = mxGetCell(mxGetCell(matlabInputMatrix, i),j);
-                     mat aM = matlab2armadilloMatrix(matlabOutputMatrix);
+                     mat aM = utility::matlab2armadilloMatrix(matlabOutputMatrix);
                      vTemp.push_back(aM);
                 }
                 vDMPTemp.push_back(vTemp);
@@ -108,11 +44,11 @@ void onlineGMR::readMatlabFile()
         else if (strcmp(name, "Priors") == 0)
         {
             vector< vector <mat> > vDMPTemp;
-            for (int i=0; i < mxGetN(matlabInputMatrix); i++) {
+            for (unsigned int i=0; i < mxGetN(matlabInputMatrix); i++) {
                 vector<mat> vTemp;
-                for (int j=0; j < mxGetN(mxGetCell(matlabInputMatrix, i)); j++) {
+                for (unsigned int j=0; j < mxGetN(mxGetCell(matlabInputMatrix, i)); j++) {
                      mxArray *matlabOutputMatrix = mxGetCell(mxGetCell(matlabInputMatrix, i),j);
-                     mat aM = matlab2armadilloMatrix(matlabOutputMatrix);
+                     mat aM = utility::matlab2armadilloMatrix(matlabOutputMatrix);
                      vTemp.push_back(aM);
                 }
                 vDMPTemp.push_back(vTemp);
@@ -122,9 +58,9 @@ void onlineGMR::readMatlabFile()
         else if (strcmp(name, "Priors_Mixtures") == 0)
         {
             vector< mat > vDMPTemp;
-            for (int i=0; i < mxGetN(matlabInputMatrix); i++) {
+            for (unsigned int i=0; i < mxGetN(matlabInputMatrix); i++) {
                 mxArray *matlabTempMatrix = mxGetCell(matlabInputMatrix, i);
-                mat aM = matlab2armadilloMatrix(matlabTempMatrix);
+                mat aM = utility::matlab2armadilloMatrix(matlabTempMatrix);
                 vDMPTemp.push_back(aM);
             }
             gmm.Priors_mixtures = vDMPTemp;
@@ -132,11 +68,11 @@ void onlineGMR::readMatlabFile()
         else if (strcmp(name, "Sigma2") == 0)
         {
             vector< vector <cube> > vDMPTemp;
-            for (int i=0; i < mxGetN(matlabInputMatrix); i++) {
+            for (unsigned int i=0; i < mxGetN(matlabInputMatrix); i++) {
                 vector<cube> vTemp;
-                for (int j=0; j < mxGetN(mxGetCell(matlabInputMatrix, i)); j++) {
+                for (unsigned int j=0; j < mxGetN(mxGetCell(matlabInputMatrix, i)); j++) {
                      mxArray *matlabOutputMatrix = mxGetCell(mxGetCell(matlabInputMatrix, i),j);
-                     cube aC = matlab2armadilloMatrix3D(matlabOutputMatrix);
+                     cube aC = utility::matlab2armadilloMatrix3D(matlabOutputMatrix);
                      vTemp.push_back(aC);
                 }
                 vDMPTemp.push_back(vTemp);
@@ -229,7 +165,7 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
     utility::writeMatlabFile(F, "F", outputFile);
 
 
-    return armadilloVector2stdVector(&F);
+    return utility::armadilloVector2stdVector(&F);
 }
 
 void onlineGMR::debugForcingTerms(vec F)

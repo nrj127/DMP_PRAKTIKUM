@@ -7,18 +7,37 @@ utility::utility()
 
 void utility::stdVectorMatrix2matlabMatrix(vector < vector<double> > *input, mxArray *outputMatrix)
 {
-
     int mrows = input->size();
     int ncols = input->at(0).size();
-
 
     // copy each row to outputMatrix
     for (int i=0; i < ncols; i++)
     {
         memcpy(mxGetPr(outputMatrix) + i*mrows, &(input->at(0).at(i)), sizeof(double) * mrows);
     }
+}
 
-    // memcpy(mxGetPr(outputMatrix), &input[0][0], sizeof(double) * input->size() * input->at(0).size());
+//creates an armadillo matrix from a matlab matrix
+mat utility::matlab2armadilloMatrix(mxArray *matlabMatrix)
+{
+    mwSize mrows = mxGetM(matlabMatrix);
+    mwSize ncols = mxGetN(matlabMatrix);
+
+    double *values = mxGetPr(matlabMatrix);
+
+    return mat(values, mrows, ncols);
+}
+
+//creates a 3D armadillo matrix from a 3D matlab matrix
+cube utility::matlab2armadilloMatrix3D(mxArray *matlabMatrix)
+{
+    int mrows = mxGetDimensions(matlabMatrix)[0];
+    int ncols = mxGetDimensions(matlabMatrix)[1];
+    int hslice = mxGetDimensions(matlabMatrix)[2];
+
+    double *values = mxGetPr(matlabMatrix);
+
+    return cube(values, mrows, ncols, hslice);
 }
 
 void utility::writeMatlabFile(mat armaMatrix, const char *varname, const char *filename)
@@ -81,6 +100,12 @@ vector<double> utility::armadilloVector2stdVector(mat *armaMatrix)
         TempVec[i] = armaMatrix->at(i);
     }
     return TempVec;
+}
+
+void utility::stdVector2matlabVector(vector<double> *input, mxArray *outputMatrix)
+{
+    outputMatrix = mxCreateDoubleMatrix(input->size(), 1, mxREAL);
+    mxSetPr(outputMatrix, &(input->at(0)));
 }
 
 utility::~utility()
