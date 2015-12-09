@@ -62,25 +62,6 @@ void utility::writeMatlabFile(mxArray *matlabMatrix, const char *varname, const 
     matClose(pmat);
 }
 
-/*
-void utility::writeMatlabFile(vector<mxArray *> matlabMatrixMulti, const char *filename)
-{
-    MATFile *pmat;
-
-    pmat=matOpen(filename, "w");
-    if (pmat == NULL)
-        exit(EXIT_FAILURE);
-
-    char *varname;
-    for (unsigned int i=0; i < matlabMatrixMulti.size(); i++)
-    {
-        sprintf(varname, "%d", i);
-        matPutVariable(pmat, varname, matlabMatrixMulti[i]);
-    }
-    matClose(pmat);
-}
-*/
-
 void utility::armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem)
 {
     //int mrows = armaMatrix->n_rows;

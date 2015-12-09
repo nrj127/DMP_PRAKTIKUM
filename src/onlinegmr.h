@@ -28,18 +28,8 @@ typedef struct {
 class onlineGMR
 {
 private:
-
     const char* inputFile;
     const char* outputFile;
-
-    //static const char FIRST_LEVEL_DIMENSIONS = 9;
-    //static const char SIGMA_DIM_M = 4;
-    //static const char SIGMA_DIM_N = 4;
-    //static const char SIGMA_DIM_O = 25;
-
-    //mat matlab2armadilloMatrix(mxArray *matlabMatrix);
-    //cube matlab2armadilloMatrix3D(mxArray *matlabMatrix);
-
     GMM gmm;
     void debugForcingTerms(vec F);
 
@@ -47,7 +37,6 @@ public:
     onlineGMR(const char *inputFile, const char *outputFile);
     void readMatlabFile();
     vector<double> regression(vec vecX);
-
     vec calcPDF(vec X, vec Mu, mat Sigma);
 
     virtual ~onlineGMR();
