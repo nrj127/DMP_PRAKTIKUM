@@ -15,11 +15,10 @@ dmp_integrator::dmp_integrator()
     v_traj.resize( ndmp , vector<double>( nsteps , 0.0 ) );
     s_traj.resize( ndmp , vector<double>( nsteps , 0.0 ) );
 
-    x_0.resize(ndmp,0);
     v_0.resize(ndmp,0);
     s_0.resize(ndmp,1);
 
-    x_0={-0,521055939000000,-0,285697768600000, 2,33119239481157 };
+    x_0={-0.521055939000000,-0.285697768600000, 2.33119239481157 };
 
     h_task[0] = -0.4105;
     h_task[1] =  0.0552;
@@ -79,7 +78,7 @@ void dmp_integrator::start_integration()
             */
         }
     }
-
+    cout << "here" << endl;
     //save to .mat files
 }
 

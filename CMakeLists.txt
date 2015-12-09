@@ -86,7 +86,7 @@ target_link_libraries(mainFRITest -lFastResearchInterfaceLibrary -lrt)
 rosbuild_add_executable(mainFRITest_rviz ${sources_irml} src/mainFRITest_rviz.cpp src/RunTrajectorySimple.cpp)
 target_link_libraries(mainFRITest_rviz -lFastResearchInterfaceLibrary -lrt)
 
-rosbuild_add_executable(test_dmp  src/test_dmp_integrator  ${sources_thomas} ${sources_frederik})
+rosbuild_add_executable(test_dmp  src/test_dmp_integrator.cpp  ${sources_thomas} ${sources_frederik})
 target_link_libraries(test_dmp libmat.so libmx.so -larmadillo -lrt)
 
 rosbuild_add_executable(maindmpFRI src/maindmpFRI.cpp ${sources_thomas} ${sources_frederik} ${sources_irml} ${sources_affan})
