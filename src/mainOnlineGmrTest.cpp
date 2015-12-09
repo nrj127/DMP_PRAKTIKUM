@@ -19,12 +19,12 @@ int main(int argc, char* argv[]) {
 
     // test pdf
     vec X(1);
-    vec Mu(1);  Mu[0] = 5;
+    vec Mu(1);  Mu[0] = 0;
     mat Sigma(1,1);    Sigma(0,0) = 1;
     vec out(1);
 
-    for (int i=0; i<10; i++) {
-        X[0] = (double)i;
+    for (int i=0; i<100; i++) {
+        X[0] = i/10.0;
         out = gmr.calcPDF(X, Mu, Sigma);
         out.print(cout, "");
     }
