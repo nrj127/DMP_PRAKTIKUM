@@ -19,6 +19,11 @@ dmp_integrator::dmp_integrator()
     v_0.resize(ndmp,0);
     s_0.resize(ndmp,1);
 
+    x_0={-0,521055939000000,-0,285697768600000, 2,33119239481157 };
+
+    h_task[0] = -0.4105;
+    h_task[1] =  0.0552;
+
     /*
     x_traj.insert(x_traj.begin(),l,0.0);   //initialize vectors with zeros
     v_traj.insert(v_traj.begin(),l,0.0);
@@ -58,8 +63,8 @@ void dmp_integrator::start_integration()
 
             vector<double> F_vec;
             X_in[0]=s;
-            X_in[1]=0.5;
-            X_in[2]=0.5;
+            X_in[1]=h_task[0];
+            X_in[2]=h_task[1];
             F_vec=gmr.regression(X_in);
             int F = F_vec[j];
 

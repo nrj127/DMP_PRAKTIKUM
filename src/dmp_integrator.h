@@ -37,6 +37,8 @@ private:
     const double alpha=.5;              //decay factor
     const int nsteps= 2000;//2000;
 
+    double h_task[2];
+
     vector<double> v_0;  //starting values
     vector<double> x_0;
     vector<double> s_0;
