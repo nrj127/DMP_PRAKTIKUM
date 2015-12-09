@@ -42,12 +42,13 @@ private:
 
     GMM gmm;
     void debugForcingTerms(vec F);
-    vec calcPDF(vec X, vec Mu, mat Sigma);
 
 public:
     onlineGMR(const char *inputFile, const char *outputFile);
     void readMatlabFile();
     vector<double> regression(vec vecX);
+
+    vec calcPDF(vec X, vec Mu, mat Sigma);
 
     virtual ~onlineGMR();
 };

@@ -115,7 +115,7 @@ vec onlineGMR::calcPDF(vec X, vec Mu, mat Sigma)
     double denominator = sqrt(pow(2*M_PI, dimensions));
 
     // TODO check exponential function
-    return 1 / (denominator * (arma::det(Sigma))) * arma::exp(-1/2 * diff.t() * Sigma.i()* diff);
+    return 1 / (denominator * (arma::det(Sigma))) * arma::exp(-1/2 * diff.t() * Sigma.i() * diff);
 }
 
 vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
@@ -128,34 +128,29 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
     int out = gmm.Mu[0][0].n_rows - 1;  // index of output element, usually 3
     int in = out -1;    // last index of input elements, usually 0 ... 2
 
-    vec F(nDMP);
-    F.zeros();
-
+    vec F(nDMP);    F.zeros();
+    vec Ftemp(nDMP);    Ftemp.zeros();  // DEBUG
     vec currF(kComponents);
     mat InvSigma2(in,in);
-    mat sumPriors(nDMP, nDemos);
-    sumPriors.zeros();
-
+    mat sumPriors(nDMP, nDemos);    sumPriors.zeros();
     vec h(kComponents);
 
     for (int dmp=0; dmp < nDMP; dmp++) {
-
         for (int i=0; i < nDemos; i++) {
             for (int k=0; k < kComponents; k++) {
                 sumPriors(dmp, i) += as_scalar(gmm.Priors[dmp][i](k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in)));
             }
         }
         for (int i=0; i < nDemos; i++) {
-            // TODO nested loops?
             for (int k=0; k < kComponents; k++) {
                 // invert Sigma Matrix
                 InvSigma2 = gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in).i();
                 // calc current F term
                 currF[k] = as_scalar(gmm.Mu[dmp][i](out, k) + gmm.Sigma2[dmp][i].slice(k).submat(out, 0, out, in) * InvSigma2 * (X_in - gmm.Mu[dmp][i].submat(0,0,in,0)));
-                h[k] = as_scalar((gmm.Priors[dmp][i](0, k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,0,in,0), gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in))) / sumPriors(dmp, i));
+                h[k] = as_scalar((gmm.Priors[dmp][i](0, k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in))) / sumPriors(dmp, i));
             }
-            // F[dmp] = sum(h % currF); // % element wise multiplication
-            //cout << "F of dmp[" << dmp << "], demo[" << i << "] : " << F[dmp] << endl;
+            Ftemp[dmp] = sum(h % currF); // % element wise multiplication
+            cout << "Ftemp of dmp[" << dmp << "], demo[" << i << "] : " << Ftemp[dmp] << endl;
 
             F[dmp] += gmm.Priors_mixtures[dmp][i] * sum(h % currF);
         }
