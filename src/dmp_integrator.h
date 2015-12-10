@@ -6,7 +6,6 @@
 #include <mat.h>
 #include <matrix.h>
 #include <vector>
-#include <armadillo>
 #include "onlinegmr.h"
 
 
@@ -23,19 +22,20 @@ public:
     vector< vector<double> > s_traj;
 
 private:
-    const char* outputFile="../data/3_dmps_int.mat";
-    const char* gmr_outFile=".";  //not used
-    const char* inputFile = "../data/ModelDMPGaussBetaManyData3.mat";
+    static const char* outputFile;
+    static const char* gmr_outFile;
+    static const char* inputFile;
+
     void writeMatlabFile(vector<double>& x, vector<double>& v, vector<double>& s);
 
-    const double tau=1;                 //time constant
-    const double dt=.005;               //time step
-    const double omega_n=30;            //natural frequency
-    const double zeta=.707;             //damping ratio
-    const double D=2*zeta*omega_n;      //damping
+    static const double tau;
+    static const double dt;
+    static const double omega_n;
+    static const double zeta;
+    static const double D;
     double K;           //spring
-    const double alpha=.5;              //decay factor
-    const int nsteps= 2100;//2000;
+    static const double alpha;            //decay factor
+    static const int nsteps;
 
     double h_task[2];
 
@@ -43,8 +43,9 @@ private:
     vector<double> x_0;
     vector<double> s_0;
 
+    static const double ndmp;
+
     vector<double> g;     //end poses
-    const double ndmp=3;
 
     vector<int> myvector ;
 

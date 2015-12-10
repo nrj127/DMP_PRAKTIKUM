@@ -14,7 +14,7 @@
   <depend package="sensor_msgs"/>
   <depend package="rospy"/>
   <depend package="roslib"/>
-
+  <depend package="ar_track_alvar"/>
 </package>
 
 
