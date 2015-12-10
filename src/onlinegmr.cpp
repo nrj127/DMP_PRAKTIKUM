@@ -88,6 +88,7 @@ void onlineGMR::readMatlabFile()
     matClose(pmat);
 
     cout << "Reading GMM was successful!" << endl;
+    combine_data();
 }
 
 vec onlineGMR::calcPDF(vec X, vec Mu, mat Sigma)
@@ -117,25 +118,32 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
     // vec Ftemp(nDMP);    Ftemp.zeros();  // DEBUG
     vec currF(kComponents);
     mat InvSigma2(in,in);
-    mat sumPriors(nDMP, nDemos);    sumPriors.zeros();
+    vec sumPriors(nDMP);    sumPriors.zeros();
     vec h(kComponents);
     cube h_debug(nDMP,nDemos,kComponents);
 
     for (int dmp=0; dmp < nDMP; dmp++) {
         for (int i=0; i < nDemos; i++) {
             for (int k=0; k < kComponents; k++) {
-                sumPriors(dmp, i) += as_scalar(gmm.Priors_mixtures[dmp][i] * gmm.Priors[dmp][i](k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in)));
+                sumPriors(dmp) += as_scalar(gmm.Priors_mixtures[dmp][i] * gmm.Priors[dmp][i](k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in)));
+//                cout << " " << as_scalar(gmm.Priors_mixtures[dmp][i] * gmm.Priors[dmp][i](k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in))) << endl;
+//                cout << "X_in" << X_in << endl;
+//                cout << "gmm.Priors_mixtures[dmp][i]" << gmm.Priors_mixtures[dmp][i] << endl;
+//                cout << "gmm.Priors[dmp][i](k)" << gmm.Priors[dmp][i](k) << endl;
+//                cout << "pdf" << calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in)) << endl;
             }
+            //cout << "sumPriors(dmp)" << sumPriors(dmp) << endl;
         }
+//        cout << "sumPriors(dmp)" << sumPriors << endl;
         for (int i=0; i < nDemos; i++) {
             for (int k=0; k < kComponents; k++) {
                 // invert Sigma Matrix
                 InvSigma2 = gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in).i();
                 // calc current F term
-                currF[k] = as_scalar(gmm.Mu[dmp][i](out, k) + gmm.Sigma2[dmp][i].slice(k).submat(out, 0, out, in) * InvSigma2 * (X_in - gmm.Mu[dmp][i].submat(0,0,in,0)));
-                h[k] = as_scalar((gmm.Priors_mixtures[dmp][i] * gmm.Priors[dmp][i](0, k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in))) / sumPriors(dmp, i));
+                currF[k] = as_scalar(gmm.Mu[dmp][i](out, k) + gmm.Sigma2[dmp][i].slice(k).submat(out, 0, out, in) * InvSigma2 * (X_in - gmm.Mu[dmp][i].submat(0,k,in,k)));
+                h[k] = as_scalar((gmm.Priors_mixtures[dmp][i] * gmm.Priors[dmp][i](0, k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in))) / sumPriors(dmp));
 
-                cout << "check h:" << h[k] << endl;
+//                cout << "check h:" << h[k] << endl;
 //                cout << "calc pdf in h:" << calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in)) << endl;
 //                cout << "X_in" << X_in << endl;
 //                cout << "mu" << gmm.Mu[dmp][i].submat(0,k,in,k) << endl;
@@ -149,14 +157,49 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
 
             //F[dmp] += gmm.Priors_mixtures[dmp][i] * sum(h % currF);
             F[dmp] += sum(h % currF);
-        }
+        }        
+
     }
+//    cout << "xin" << X_in << endl;
+//    cout << "F "<< F << endl;
+
     // debugForcingTerms(F);
 
     utility::writeMatlabFile(F, "F", outputFile);
 
     //for (int k=0; k < kComponents; k++)
     //    cout << "check h_k:" << h_debug(0,0,k) << endl;
+
+//    vec hk(kComponents*nDemos);
+//    vec h_den(nDMP);
+
+//    vec currF2(kComponents*nDemos);
+//    vec F2(nDMP); F2.zeros();
+
+//    for (int dmp=0; dmp < nDMP; dmp++) {
+
+//        //calculate h-factors
+//        for(int k=0; k < kComponents*nDemos; k++)
+//        {
+//            h_den(dmp) += as_scalar(gmm2.Pr_comb[dmp](k) * calcPDF(X_in, gmm2.Mu[dmp].submat(0,k,in,k), gmm2.Sigma2[dmp].slice(k).submat(0,0,in,in)));
+//        }
+
+//        for(int k=0; k < kComponents*nDemos; k++)
+//        {
+//            hk(k) = as_scalar(gmm2.Pr_comb[dmp](k) * calcPDF(X_in, gmm2.Mu[dmp].submat(0,k,in,k), gmm2.Sigma2[dmp].slice(k).submat(0,0,in,in)));
+//            hk(k)/= h_den(dmp);
+
+//            InvSigma2 = gmm2.Sigma2[dmp].slice(k).submat(0, 0, in, in).i();
+
+//            currF2(k) = as_scalar(gmm2.Mu[dmp](out, k) + gmm2.Sigma2[dmp].slice(k).submat(out,0,out,in) * InvSigma2 * (X_in - gmm.Mu[dmp].submat(0,k,in,k)));
+//            F2+=currF2(k)*hk(k);
+//        }
+
+//        cout << "xin" << X_in << endl;
+//        cout << "F2 "<< F << endl;
+
+
+//    }
 
 
 
@@ -168,7 +211,43 @@ void onlineGMR::debugForcingTerms(vec F)
     cout << F << endl;
 }
 
+void onlineGMR::combine_data()
+{
+    int nDMP = gmm.Priors.size();
+    int nDemos = gmm.Priors[0].size();
+    int kComponents = gmm.Priors[0][0].n_cols;
+
+
+    for (int dmp=0; dmp < nDMP; dmp++) {
+        //set the sizes
+        vec Pr_comb;
+        mat Mu;
+        cube Sigma2;
+        Pr_comb.zeros(kComponents*nDemos);
+        Mu.zeros(4,kComponents*nDemos);
+        Sigma2.zeros(4,4,kComponents*nDemos);
+        gmm2.Pr_comb.push_back(Pr_comb);
+        gmm2.Mu.push_back(Mu);
+        gmm2.Sigma2.push_back(Sigma2);
+
+        for (int i=0; i < nDemos; i++) {
+            for (int k=0; k < kComponents; k++) {
+                gmm2.Pr_comb[dmp](k+i*kComponents)=gmm.Priors[dmp][i](0,k)*gmm.Priors_mixtures[dmp][i];
+                gmm2.Mu[dmp].col(k+i*kComponents)=gmm.Mu[dmp][i].col(k);
+                gmm2.Sigma2[dmp].slice(k+i*kComponents)=gmm.Sigma2[dmp][i].slice(k);
+            }
+        }
+    }
+
+//    cout << "gmm2.Pr_comb[dmp]   "<< gmm2.Pr_comb[0] << endl;
+//    cout << "gmm2.Mu[0].cols(1,10)   "<< gmm2.Mu[0].cols(0,9);
+//    cout << "gmm.Mu[0][0].cols(1,10)   "<< gmm.Mu[0][0].cols(0,9);
+//    cout << "gmm2.Sigma2[dmp0].slice(0)   " << gmm2.Sigma2[0].slice(0);
+
+}
+
 onlineGMR::~onlineGMR()
 {
+
 
 }

@@ -25,13 +25,23 @@ typedef struct {
     vector< vector <cube> > Sigma2;
 } GMM;
 
+typedef struct {            //different structure identical to matlab-script
+    vector <mat> Mu;        //dimensions: 3 dmps, 270 components
+    vector <vec> Pr_comb;   //dimensions: 3 dmps, 270 components
+    vector <cube> Sigma2;   //dimensions: 3 dmps, 270 components, 4x4 matrix
+} GMM2;
+
+
 class onlineGMR
 {
 private:
     const char* inputFile;
     const char* outputFile;
     GMM gmm;
+    GMM2 gmm2;
+
     void debugForcingTerms(vec F);
+    void combine_data();
 
 public:
     onlineGMR(const char *inputFile, const char *outputFile);

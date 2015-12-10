@@ -21,12 +21,12 @@ dmp_integrator::dmp_integrator()
     x_0 ={-0.521055939000000,-0.285697768600000, 2.33119239481157 };  //inital pose
     g = {-0.518771839625202, 0.241740713536797 , 2.36155119110486}; //end pose
 
-    //h_task[0] = -0.4105; //orig
-    //h_task[1] =  0.0552; //orig
+    h_task[0] = -0.4105; //orig
+    h_task[1] =  0.0552; //orig
     //h_task[0] = -0.3;
     //h_task[1] =  0.04;
-    h_task[0] = -0.6;
-    h_task[1] =  -0.04;
+    //h_task[0] = -0.6;
+    //h_task[1] =  -0.04;
 
     /*
     x_traj.insert(x_traj.begin(),l,0.0);   //initialize vectors with zeros
