@@ -1,0 +1,53 @@
+sudo apt-get install ros-indigo-freenect-camera
+
+sudo apt-get install ros-indigo-freenect-launch
+
+Do the following in you catkin_workspace/src 
+
+git clone https://github.com/sniekum/ar_track_alvar.git
+
+ fur
+
+Change directory to ar_track_alvar
+
+git checkout f093668
+
+sudo apt-get install ros-indigo-ar-track-alvar
+
+On one terminal do  roslaunch freenect_launch freenect.launch 
+
+Now, change to launch file in the ar_track_alvar package, 
+
+do roscd ar_track_alvar then cd launch and execute vim pr2_indiv.launch 
+
+now change the middle three lines to 
+
+	<arg name="cam_image_topic" default="/camera/depth_registered/points" />
+
+        <arg name="cam_info_topic" default="/camera/rgb/camera_info" />
+
+        <arg name="output_frame" default="/camera_depth_optical_frame" />
+
+(I just changed kinect_head to camera since this is topic name published by the freenect launch file)
+
+Also, do the following
+
+rosrun rqt_reconfigure rqt_reconfigure and click on the first icon.
+
+now you need to use the marker, do the following
+
+at a distance of 0.5 m place the marker in front of the camera, and execute the following command
+
+rosecho /ARmarker_points
+
+Now when you move the marker, you will see the position being displayed.
+
+You need to use this position to do the next task, 
+
+To visualize the results, 
+
+open reviz, change the base frame to /camera_depth_optical_frame
+
+then, add a marker topic, and a tf topic,
+
+Now, you should be able to visualize the marker.

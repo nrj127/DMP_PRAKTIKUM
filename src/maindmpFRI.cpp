@@ -367,16 +367,18 @@ int main(int argc, char *argv[])
                     for(i=0; i<FRI_CART_FRM_DIM; ++i){
                         demo_[it_][i] = currentCartPose[i];
 
-                        if(i%100==0){
-                            rowvec a(12);
-                            cout << "it_" <<  it_ << endl;
-                            cout << "i" <<  i << endl;
-                            cout << "demo_[it_].size()" <<  demo_[it_].size() << endl;
-                            vector<double> v_double(demo_[it_].begin(), demo_[it_].end());
 
-                            a = utility::cvec2armadilloColVec(v_double);
-                            cout << "current end.frame: (12 values)" <<  a << endl;
-                        }
+                    }
+
+                    if(it_%100==0){
+                        colvec a(12);
+                        cout << "it_" <<  it_ << endl;
+                        cout << "i" <<  i << endl;
+                        cout << "demo_[it_].size()" <<  demo_[it_].size() << endl;
+                        vector<double> v_double(demo_[it_].begin(), demo_[it_].end());
+
+                        a = utility::cvec2armadilloColVec(v_double);
+                        cout << "current end.frame: (12 values)" <<  a << endl;
                     }
                     // Check demonstration finished
                     /*if(LoopValue<2000){

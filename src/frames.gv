@@ -1,0 +1,16 @@
+digraph G {
+"/camera_rgb_optical_frame" -> "/ar_marker_13"[label="Broadcaster: /ar_track_alvar\nAverage rate: 30.172 Hz\nMost recent transform: 0.141 sec old \nBuffer length: 4.972 sec\n"];
+"/camera_rgb_frame" -> "/camera_rgb_optical_frame"[label="Broadcaster: /camera_base_link3\nAverage rate: 9.820 Hz\nMost recent transform: -0.084 sec old \nBuffer length: 4.888 sec\n"];
+"/camera_link" -> "/camera_rgb_frame"[label="Broadcaster: /camera_base_link1\nAverage rate: 9.821 Hz\nMost recent transform: -0.008 sec old \nBuffer length: 4.888 sec\n"];
+"/camera_depth_frame" -> "/camera_depth_optical_frame"[label="Broadcaster: /camera_base_link2\nAverage rate: 9.820 Hz\nMost recent transform: -0.024 sec old \nBuffer length: 4.888 sec\n"];
+"/camera_link" -> "/camera_depth_frame"[label="Broadcaster: /camera_base_link\nAverage rate: 9.812 Hz\nMost recent transform: -0.056 sec old \nBuffer length: 4.892 sec\n"];
+"/camera2robot" -> "/camera2robot_transform"[label="Broadcaster: /camera2robot_transform\nAverage rate: 1.250 Hz\nMost recent transform: 0.360 sec old \nBuffer length: 4.000 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1450272285.126"[ shape=plaintext ] ;
+ }->"/camera_link";
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1450272285.126"[ shape=plaintext ] ;
+ }->"/camera2robot";
+}

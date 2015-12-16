@@ -15,6 +15,7 @@
   <depend package="rospy"/>
   <depend package="roslib"/>
   <depend package="ar_track_alvar"/>
+  <depend package="tf"/>
 </package>
 
 
