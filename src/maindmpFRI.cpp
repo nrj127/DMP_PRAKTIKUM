@@ -372,7 +372,9 @@ int main(int argc, char *argv[])
                             cout << "it_" <<  it_ << endl;
                             cout << "i" <<  i << endl;
                             cout << "demo_[it_].size()" <<  demo_[it_].size() << endl;
-                            a = utility::cvec2armadilloColVec(demo_[it_]);
+                            vector<double> v_double(demo_[it_].begin(), demo_[it_].end());
+
+                            a = utility::cvec2armadilloColVec(v_double);
                             cout << "current end.frame: (12 values)" <<  a << endl;
                         }
                     }
