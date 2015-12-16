@@ -369,9 +369,11 @@ int main(int argc, char *argv[])
 
                         if(i%100==0){
                             rowvec a(12);
-                            cout << 'demo_[it_].size()' <<  demo_[it_].size() << endl;
+                            cout << "it_" <<  it_ << endl;
+                            cout << "i" <<  i << endl;
+                            cout << "demo_[it_].size()" <<  demo_[it_].size() << endl;
                             a = utility::cvec2armadilloColVec(demo_[it_]);
-                            cout << 'current end.frame: (12 values)' <<  a << endl;
+                            cout << "current end.frame: (12 values)" <<  a << endl;
                         }
                     }
                     // Check demonstration finished
