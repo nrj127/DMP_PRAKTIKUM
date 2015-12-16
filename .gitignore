@@ -2,3 +2,4 @@ build/
 bin/
 utility/pbdlib/build/
 CMakeLists.txt.user
+*.autosave
