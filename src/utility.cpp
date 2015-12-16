@@ -36,6 +36,13 @@ cube utility::matlab2armadilloMatrix3D(mxArray *matlabMatrix)
     return cube(values, mrows, ncols, hslice);
 }
 
+vec utility::cvec2armadilloRowVec(vector<float> input)
+{
+    rowvec a(input.size());
+    a = conv_to<rowvec>::from(input);
+    return a;
+}
+
 void utility::writeMatlabFile(mat armaMatrix, const char *varname, const char *filename)
 {
     MATFile *pmat;
@@ -86,3 +93,5 @@ void utility::stdVector2matlabVector(vector<double> *input, mxArray *outputMatri
     outputMatrix = mxCreateDoubleMatrix(input->size(), 1, mxREAL);
     mxSetPr(outputMatrix, &(input->at(0)));
 }
+
+
