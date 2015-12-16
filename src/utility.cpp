@@ -38,8 +38,9 @@ cube utility::matlab2armadilloMatrix3D(mxArray *matlabMatrix)
 
 vec utility::cvec2armadilloRowVec(vector<float> input)
 {
-    vec a(input.size());
-    a = conv_to<vec>::from(input);
+    rowvec a(input.size());
+    cout << "got input of size" << input.size() << endl;
+    a = conv_to<rowvec>::from(input);
     return a;
 }
 
