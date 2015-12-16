@@ -370,7 +370,7 @@ int main(int argc, char *argv[])
                         if(i%100==0){
                             rowvec a(12);
                             cout << 'demo_[it_].size()' <<  demo_[it_].size() << endl;
-                            a = utility::cvec2armadilloRowVec(demo_[it_]);
+                            a = utility::cvec2armadilloColVec(demo_[it_]);
                             cout << 'current end.frame: (12 values)' <<  a << endl;
                         }
                     }

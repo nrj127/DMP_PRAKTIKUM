@@ -36,11 +36,11 @@ cube utility::matlab2armadilloMatrix3D(mxArray *matlabMatrix)
     return cube(values, mrows, ncols, hslice);
 }
 
-vec utility::cvec2armadilloRowVec(vector<float> input)
+vec utility::cvec2armadilloColVec(vector<float> input)
 {
-    rowvec a(input.size());
+    colvec a(input.size());
     cout << "got input of size" << input.size() << endl;
-    a = conv_to<rowvec>::from(input);
+    a = conv_to<colvec>::from(input);
     return a;
 }
 

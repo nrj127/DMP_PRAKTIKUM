@@ -22,7 +22,7 @@ public:
     static void stdVector2matlabVector(vector<double> *input, mxArray *outputMatrix);
     static mat matlab2armadilloMatrix(mxArray *matlabMatrix);
     static cube matlab2armadilloMatrix3D(mxArray *matlabMatrix);
-    static vec cvec2armadilloRowVec(vector<float> input);
+    static vec cvec2armadilloColVec(vector<float> input);
 
     ~utility() { }
 };
