@@ -366,6 +366,12 @@ int main(int argc, char *argv[])
                     // Store data
                     for(i=0; i<FRI_CART_FRM_DIM; ++i){
                         demo_[it_][i] = currentCartPose[i];
+
+                        if(i%100==0){
+                            vec a;
+                            a = utility::cvec2armadilloRowVec(demo_[it_]);
+                            cout << 'current end.frame: (12 values)' <<  a << endl;
+                        }
                     }
                     // Check demonstration finished
                     /*if(LoopValue<2000){

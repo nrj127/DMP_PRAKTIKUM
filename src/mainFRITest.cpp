@@ -323,7 +323,7 @@ int main(int argc, char *argv[])
 
                     // Store data
                     for(i=0; i<FRI_CART_FRM_DIM; ++i){
-                        demo_[it_][i] = currentCartPose[i];
+                        demo_[it_][i] = currentCartPose[i];                        
                     }
                     // Check demonstration finished
                     /*if(LoopValue<2000){

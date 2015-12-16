@@ -88,7 +88,7 @@ void onlineGMR::readMatlabFile()
     matClose(pmat);
 
     cout << "Reading GMM was successful!" << endl;
-    combine_data();
+    //combine_data();
 }
 
 vec onlineGMR::calcPDF(vec X, vec Mu, mat Sigma)
@@ -125,16 +125,10 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
     for (int dmp=0; dmp < nDMP; dmp++) {
         for (int i=0; i < nDemos; i++) {
             for (int k=0; k < kComponents; k++) {
-                sumPriors(dmp) += as_scalar(gmm.Priors_mixtures[dmp][i] * gmm.Priors[dmp][i](k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in)));
-//                cout << " " << as_scalar(gmm.Priors_mixtures[dmp][i] * gmm.Priors[dmp][i](k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in))) << endl;
-//                cout << "X_in" << X_in << endl;
-//                cout << "gmm.Priors_mixtures[dmp][i]" << gmm.Priors_mixtures[dmp][i] << endl;
-//                cout << "gmm.Priors[dmp][i](k)" << gmm.Priors[dmp][i](k) << endl;
-//                cout << "pdf" << calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in)) << endl;
+                sumPriors(dmp) += as_scalar(gmm.Priors_mixtures[dmp][i] * gmm.Priors[dmp][i](k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in)));                
             }
-            //cout << "sumPriors(dmp)" << sumPriors(dmp) << endl;
         }
-//        cout << "sumPriors(dmp)" << sumPriors << endl;
+
         for (int i=0; i < nDemos; i++) {
             for (int k=0; k < kComponents; k++) {
                 // invert Sigma Matrix
@@ -142,20 +136,7 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
                 // calc current F term
                 currF[k] = as_scalar(gmm.Mu[dmp][i](out, k) + gmm.Sigma2[dmp][i].slice(k).submat(out, 0, out, in) * InvSigma2 * (X_in - gmm.Mu[dmp][i].submat(0,k,in,k)));
                 h[k] = as_scalar((gmm.Priors_mixtures[dmp][i] * gmm.Priors[dmp][i](0, k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in))) / sumPriors(dmp));
-
-//                cout << "check h:" << h[k] << endl;
-//                cout << "calc pdf in h:" << calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in)) << endl;
-//                cout << "X_in" << X_in << endl;
-//                cout << "mu" << gmm.Mu[dmp][i].submat(0,k,in,k) << endl;
-//                cout << "submatrix" << gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in) << endl;
-
-                //cout << "sumPriors h:" << sumPriors(dmp, i) << endl;
             }
-            // DEBUG
-            //Ftemp[dmp] = sum(h % currF); // % element wise multiplication
-            //cout << "Ftemp of dmp[" << dmp << "], demo[" << i << "] : " << Ftemp[dmp] << endl;
-
-            //F[dmp] += gmm.Priors_mixtures[dmp][i] * sum(h % currF);
             F[dmp] += sum(h % currF);
         }        
 
@@ -166,42 +147,6 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
     // debugForcingTerms(F);
 
     utility::writeMatlabFile(F, "F", outputFile);
-
-    //for (int k=0; k < kComponents; k++)
-    //    cout << "check h_k:" << h_debug(0,0,k) << endl;
-
-//    vec hk(kComponents*nDemos);
-//    vec h_den(nDMP);
-
-//    vec currF2(kComponents*nDemos);
-//    vec F2(nDMP); F2.zeros();
-
-//    for (int dmp=0; dmp < nDMP; dmp++) {
-
-//        //calculate h-factors
-//        for(int k=0; k < kComponents*nDemos; k++)
-//        {
-//            h_den(dmp) += as_scalar(gmm2.Pr_comb[dmp](k) * calcPDF(X_in, gmm2.Mu[dmp].submat(0,k,in,k), gmm2.Sigma2[dmp].slice(k).submat(0,0,in,in)));
-//        }
-
-//        for(int k=0; k < kComponents*nDemos; k++)
-//        {
-//            hk(k) = as_scalar(gmm2.Pr_comb[dmp](k) * calcPDF(X_in, gmm2.Mu[dmp].submat(0,k,in,k), gmm2.Sigma2[dmp].slice(k).submat(0,0,in,in)));
-//            hk(k)/= h_den(dmp);
-
-//            InvSigma2 = gmm2.Sigma2[dmp].slice(k).submat(0, 0, in, in).i();
-
-//            currF2(k) = as_scalar(gmm2.Mu[dmp](out, k) + gmm2.Sigma2[dmp].slice(k).submat(out,0,out,in) * InvSigma2 * (X_in - gmm.Mu[dmp].submat(0,k,in,k)));
-//            F2+=currF2(k)*hk(k);
-//        }
-
-//        cout << "xin" << X_in << endl;
-//        cout << "F2 "<< F << endl;
-
-
-//    }
-
-
 
     return utility::armadilloVector2stdVector(&F);
 }
