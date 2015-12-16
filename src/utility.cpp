@@ -38,9 +38,16 @@ cube utility::matlab2armadilloMatrix3D(mxArray *matlabMatrix)
 
 vec utility::cvec2armadilloColVec(vector<double> input)
 {
-    colvec a(input.size());
+    //colvec a(input.size());
     cout << "got input of size" << input.size() << endl;
-    a = conv_to<colvec>::from(input);
+
+
+    typedef std::vector<double> stdvec;
+    stdvec x(3);
+    x[0] = 0.0; x[1] = 1.0;  x[2] = 2.0;
+    colvec a(x);
+
+    a = conv_to<colvec>::from(x);
     return a;
 }
 
