@@ -368,7 +368,8 @@ int main(int argc, char *argv[])
                         demo_[it_][i] = currentCartPose[i];
 
                         if(i%100==0){
-                            vec a(12);
+                            rowvec a(12);
+                            cout << 'demo_[it_].size()' <<  demo_[it_].size() << endl;
                             a = utility::cvec2armadilloRowVec(demo_[it_]);
                             cout << 'current end.frame: (12 values)' <<  a << endl;
                         }
