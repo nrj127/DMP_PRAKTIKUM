@@ -55,7 +55,7 @@ int main(int argc, char** argv){
 	  // send static transform if initialized one time
 	  if (init_transform ) {
 	       	cout << "Sending transform: camera > robot... ";
-          	br.sendTransform(tf::StampedTransform(out_transform, ros::Time::now(), "/camera_link", "/robot_locked"));
+            br.sendTransform(tf::StampedTransform(out_transform, ros::Time::now(), "/camera_link", "/robot_locked"));
           	cout << "done" << endl;
 	  }
 

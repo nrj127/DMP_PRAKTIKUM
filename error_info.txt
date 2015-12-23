@@ -1,0 +1,23 @@
+*** glibc detected *** ./maindmpFRI: free(): invalid pointer: 0x087441c0 ***
+======= Backtrace: =========
+/lib/i386-linux-gnu/libc.so.6(+0x74f82)[0xb7194f82]
+/usr/lib/i386-linux-gnu/libstdc++.so.6(_ZdlPv+0x1f)[0xb73d751f]
+./maindmpFRI(_ZN4arma4CubeIdE10delete_matEv+0x5c)[0x80817dc]
+./maindmpFRI(_ZN4arma4CubeIdED1Ev+0x11)[0x808094d]
+./maindmpFRI(_ZSt8_DestroyIN4arma4CubeIdEEEvPT_+0x11)[0x80899c2]
+./maindmpFRI(_ZNSt12_Destroy_auxILb0EE9__destroyIPN4arma4CubeIdEEEEvT_S6_+0x1b)[0x808792c]
+./maindmpFRI(_ZSt8_DestroyIPN4arma4CubeIdEEEvT_S4_+0x18)[0x808408f]
+./maindmpFRI(_ZSt8_DestroyIPN4arma4CubeIdEES2_EvT_S4_RSaIT0_E+0x18)[0x8081d8a]
+./maindmpFRI(_ZNSt6vectorIN4arma4CubeIdEESaIS2_EED1Ev+0x2d)[0x8080c7b]
+./maindmpFRI(_ZSt8_DestroyISt6vectorIN4arma4CubeIdEESaIS3_EEEvPT_+0x11)[0x8089982]
+./maindmpFRI(_ZNSt12_Destroy_auxILb0EE9__destroyIPSt6vectorIN4arma4CubeIdEESaIS5_EEEEvT_S9_+0x1b)[0x8087872]
+./maindmpFRI(_ZSt8_DestroyIPSt6vectorIN4arma4CubeIdEESaIS3_EEEvT_S7_+0x18)[0x8083f83]
+./maindmpFRI(_ZSt8_DestroyIPSt6vectorIN4arma4CubeIdEESaIS3_EES5_EvT_S7_RSaIT0_E+0x18)[0x8081c2a]
+./maindmpFRI(_ZNSt6vectorIS_IN4arma4CubeIdEESaIS2_EESaIS4_EED2Ev+0x2d)[0x8080ba7]
+./maindmpFRI[0x807cba7]
+./maindmpFRI(_ZN9onlineGMRD1Ev+0x2c)[0x807fca6]
+./maindmpFRI(_ZN14dmp_integratorD1Ev+0x15)[0x8076769]
+./maindmpFRI(main+0x1426)[0x80740b1]
+/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xf3)[0xb71394d3]
+./maindmpFRI[0x8072471]
+

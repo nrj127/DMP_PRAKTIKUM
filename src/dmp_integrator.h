@@ -26,6 +26,9 @@ public:
 
     int iteration;  //the current iteratio
 
+    virtual ~dmp_integrator();
+
+
 private:
     static const char* outputFile;
     static const char* gmr_outFile;
@@ -54,6 +57,7 @@ private:
 
     vector<int> myvector ;
     onlineGMR gmr;
+
 
 
 };

@@ -194,5 +194,4 @@ void onlineGMR::combine_data()
 onlineGMR::~onlineGMR()
 {
 
-
 }

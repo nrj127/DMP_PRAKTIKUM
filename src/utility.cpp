@@ -57,19 +57,25 @@ void utility::writeMatlabFile(mat armaMatrix, const char *varname, const char *f
     matPutVariable(pmat, varname, matlabMatrix);
     matClose(pmat);
 
-    mxDestroyArray(matlabMatrix);
 }
 
 void utility::writeMatlabFile(mxArray *matlabMatrix, const char *varname, const char *filename)
 {
     MATFile *pmat;
 
+    cout << "Opening matlab file...";
     pmat=matOpen(filename, "w");
-    if (pmat == NULL)
+    if (pmat == NULL) {
+        cerr << "could not open matlab file for writing!" << endl;
         exit(EXIT_FAILURE);
+    }
+    cout << "done" << endl;
 
+    cout << "Put variable into file...";
     matPutVariable(pmat, varname, matlabMatrix);
+    cout << "Closing file...";
     matClose(pmat);
+    cout << "done" << endl;
 }
 
 void utility::armadillo2matlabMatrix(mat *armaMatrix, mxArray *outputMatrix, int num_elem)

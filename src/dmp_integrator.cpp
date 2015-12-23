@@ -23,6 +23,8 @@ dmp_integrator::dmp_integrator() : gmr(inputFile, outputFile)
 {
     K=pow(omega_n,2.0);
 
+
+
     //std::vector<double>::size_type l = nsteps;
     cout << "out1" << endl;
 
@@ -149,5 +151,12 @@ vector<double> dmp_integrator::integrate_onestep()
         new_x[j]=x_traj[j][i+1];  //writing to results
     }
     return new_x;
+}
+
+
+// destructor
+dmp_integrator::~dmp_integrator()
+{
+
 }
 

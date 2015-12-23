@@ -18,6 +18,8 @@
 #include <ctime>
 #include "camerahandle.h"
 #include "dmp_integrator.h"
+#include <tf/transform_listener.h>
+#include <geometry_msgs/Vector3.h>
 
 using namespace std;
 
@@ -281,16 +283,33 @@ int main(int argc, char *argv[])
                 ros::init(argc, argv, "dmp_listener");
                 ros::NodeHandle n;
 
-                // object to handle camera topic callback
-                //CameraHandle Camera;
+                tf::StampedTransform transform;
+                tf::TransformListener listener;
 
-                //ros::Subscriber sub = n.subscribe("/ar_pose_marker", 1000, &CameraHandle::callback, &Camera);
+                bool exception_flag = false;
 
-//                const char* inputFile = "../data/ModelDMPGaussBetaManyData.mat";
-//                const char* outputFile = "../data/TestOnlineGmrOutput.mat";
+               do {
+                    try{
+                        // reading transform of marker for the first time
+                        ros::Time now = ros::Time::now();
+                        listener.waitForTransform("/ar_marker_1", "/robot", now, ros::Duration(2.0) );
+                        ROS_INFO("Reading tf for the first time... ");
+                        listener.lookupTransform("/ar_marker_1", "/robot", now, transform);
+                        ROS_INFO("done");
+                        exception_flag = false;
+                    }
+                    catch (tf::TransformException ex){
+                        ROS_ERROR("%s",ex.what());
+                        ros::Duration(0.1).sleep();
+                        exception_flag = true;
+                    }
+                } while (exception_flag == true);
 
-//                onlineGMR gmr = onlineGMR(inputFile, outputFile);
-//                gmr.readMatlabFile();
+
+               int display_counter = 0;
+               int display_cycles = 100;
+               clock_t elapsed_time = 0;
+
                dmp_integrator integrator1;
 
 //                // create vector for 3 DMPs
@@ -303,8 +322,36 @@ int main(int argc, char *argv[])
                while ((FRI->IsMachineOK()) && it_< LoopValue  ){
                     FRI->WaitForKRCTick();
 
+                    display_counter++;
+
+                    // ---------------------------------------------------
                     // start time measurement
-                    clock_t begin = clock();
+                    // clock_t begin = clock();
+                    // ---------------------------------------------------
+
+                    // get object pos from ROS
+
+                    // transform from camera to robot coordinate system
+                    ros::Time now = ros::Time::now();
+                    //listener.waitForTransform("/ar_marker_1", "/robot", now, ros::Duration(2.0) );
+                    if (display_counter%display_cycles == 0) ROS_INFO("Reading tf... ");
+                    try {
+                        listener.lookupTransform("/ar_marker_1", "/robot", now - ros::Duration(0.18), transform);
+                        if (display_counter%display_cycles == 0) ROS_INFO("done");
+                    }
+                    catch (tf::TransformException ex){
+                        ROS_ERROR("%s",ex.what());
+                        ROS_ERROR("could not look up transform from marker 1");
+                    }
+
+                    tf::Vector3 pos = transform.getOrigin();
+                    vec X_in(3);
+                    X_in[1] = pos.getX();
+                    X_in[2] = pos.getY();
+
+
+                    if (display_counter%display_cycles == 0) ROS_INFO("Pos: x: %f y: %f",  X_in[1],  X_in[2]);
+
 
                     // TODO implement dmp and GMR here -----------------------------
 
@@ -318,13 +365,6 @@ int main(int argc, char *argv[])
                     //FRI->SetCommandedCartPose(commCartPose);
                     it_++;
 
-                    ros::spinOnce();
-
-                    // finish time measurement
-                    clock_t end = clock();
-                    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-                    // cout << "Elapsed time for regression function (in ms) : " << elapsed_secs * 1000.0 << endl;
-
                     vector <double> x_dmp = integrator1.integrate_onestep();
 
                     if(it_%100==0){
@@ -333,18 +373,32 @@ int main(int argc, char *argv[])
                         cout <<"dmp0  "<< x_dmp[0] << "   dmp1: "<< x_dmp[1] << "dmp2:  "<< x_dmp[2] << endl;
                     }
 
+                    ros::spinOnce();
 
+                    // ---------------------------------------------------
+                    // finish time measurement
+                    /*
+                    time_t end = clock();
+                    elapsed_time += double(end - begin) / CLOCKS_PER_SEC;
+                    if (display_counter%display_cycles == 0) {
+                        cout << "FRI cycle time (in ms) : " << (elapsed_time * 1000.0) / ((float)display_cycles) << endl;
+                    }
+                    */
+                    // ---------------------------------------------------
                 }
 
                 cout << "saving data..." << endl;
 
                 mxArray* x_traj_mat;
+                cout << "creating matlab matrix..." << endl;
                 x_traj_mat = mxCreateDoubleMatrix(integrator1.x_traj.size(),integrator1.x_traj[0].size(),mxREAL);
+                cout << "call stdVectorMatrix2MatlabMatrix..." << endl;
                 utility::stdVectorMatrix2matlabMatrix(&integrator1.x_traj,x_traj_mat);
+                cout << "write Matlab file..." << endl;
                 utility::writeMatlabFile(x_traj_mat,"xtraj","../data/xtraj.mat");
 
+                cout << "DONE";
             }
-
 
             printf("Motion completed.\n");
             break;
