@@ -3,6 +3,7 @@
 #include <tf/transform_broadcaster.h>
 #include <iostream> // for cout
 #include </opt/ros/fuerte/stacks/geometry/tf/include/tf/LinearMath/Matrix3x3.h>
+//#include <tf/LinearMath/btMatrix3x3.h>
 //#include <geometry_msgs/Vector3.h>
 
 using namespace std;
