@@ -16,10 +16,15 @@ class dmp_integrator
 public:
     dmp_integrator();
 
-    void start_integration(void);
+    void init();   // read in matlab files and some other initialization
+    void start_integration(void);        // for testing full trajectory calculation
+    vector<double> integrate_onestep();  // used in the control loop
+
     vector< vector<double> > x_traj;
     vector< vector<double> > v_traj;
     vector< vector<double> > s_traj;
+
+    int iteration;  //the current iteratio
 
 private:
     static const char* outputFile;
@@ -48,6 +53,7 @@ private:
     vector<double> g;     //end poses
 
     vector<int> myvector ;
+    onlineGMR gmr;
 
 
 };

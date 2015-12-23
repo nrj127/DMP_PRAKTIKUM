@@ -1,11 +1,7 @@
 <launch>
-	<arg name="marker_size" default="8.0" />
-	<arg name="max_new_marker_error" default="0.08" />
-	<arg name="max_track_error" default="0.2" />
-
-	<arg name="cam_image_topic" default="/camera/depth_registered/points" />
-	<arg name="cam_info_topic" default="/camera/rgb/camera_info" />		
-	<arg name="output_frame" default="/camera_depth_optical_frame" />
-
-	<node name="ar_track_alvar" pkg="ar_track_alvar" type="individualMarkers" respawn="false" output="screen" args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame)" />
+	<include file="$(find freenect_launch)/launch/freenect.launch"/>
+	<include file="$(find ar_track_alvar)/launch/pr2_indiv.launch"/>
+	<node pkg="tf" type="static_transform_publisher" name="camera2robot_broadcaster" args="0.2355 0.0 0.015 0 0 0 1 robot_locked robot 100" />
+	<!-- send a static transform from robot_locked to robot frame -->
+	<node name="camera2robot_transform" pkg="dmp_praktikum" type="camera2robot_transform" args="" respawn="true" />
 </launch>

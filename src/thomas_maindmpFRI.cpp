@@ -325,10 +325,10 @@ int main(int argc, char *argv[])
                     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
                     // cout << "Elapsed time for regression function (in ms) : " << elapsed_secs * 1000.0 << endl;
 
-                    vector <double> x_dmp = integrator1.integrate_onestep();
 
                     if(it_%100==0){
-                        cout << "calling integrator, step" << integrator1.iteration << endl;
+                        cout << "calling integrator" << endl;
+                        vector <double> x_dmp = integrator1.integrate_onestep();
                         cout <<"it_ "<< it_ << endl;
                         cout <<"dmp0  "<< x_dmp[0] << "   dmp1: "<< x_dmp[1] << "dmp2:  "<< x_dmp[2] << endl;
                     }

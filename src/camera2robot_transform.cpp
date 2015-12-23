@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc, char** argv){
 
     // translation: init marker to robot
-    const tf::Vector3 robot_pos(0.1, 0.1, 0.015);
+    const tf::Vector3 robot_pos(0.2355, 0.0, 0.015);
     // rotation: init marker to robot
     const tf::Matrix3x3 robot_rot(1, 0, 0,
                                   0, 1, 0,
@@ -36,29 +36,33 @@ int main(int argc, char** argv){
           if (!init_transform) {
               // initial transform from camera to robot coordinate system
               ros::Time now = ros::Time::now();
-              listener.waitForTransform("/ar_marker_13", "/camera_link", now, ros::Duration(2.0) );
+              listener.waitForTransform("/camera_link", "/ar_marker_0", now, ros::Duration(2.0) );
               cout << "Reading tf... ";
-              listener.lookupTransform("/ar_marker_13", "/camera_link", now, transform);
+              listener.lookupTransform("/camera_link", "/ar_marker_0", now, transform);
               cout << "done" << endl;
 
               // do transform here
-
-              out_transform.setOrigin(robot_pos);
-              out_transform.setBasis(robot_rot);
-
-              // broadcast this transform for rviz evaluation
-              cout << "Sending transform: camera > robot... ";
-              br.sendTransform(tf::StampedTransform(out_transform, ros::Time::now(), "/ar_marker_13", "/robot"));
-              cout << "done" << endl;
-
-              // init_transform = true;
+	      
+		out_transform = transform;
+	      /*
+              out_transform.setOrigin(robot_pos - transform.getOrigin());
+              out_transform.setBasis(transform.getBasis());
+              */
+	      init_transform = true;
           }
+
+	  // send static transform if initialized one time
+	  if (init_transform ) {
+	       	cout << "Sending transform: camera > robot... ";
+          	br.sendTransform(tf::StampedTransform(out_transform, ros::Time::now(), "/camera_link", "/robot_locked"));
+          	cout << "done" << endl;
+	  }
 
           /*
           ros::Time now = ros::Time::now() ;
-          listener.waitForTransform("/ar_marker_9", "/robot", now, ros::Duration(1.0) );
+          listener.waitForTransform("/ar_marker_1", "/robot", now, ros::Duration(1.0) );
           cout << "Reading tf... ";
-          listener.lookupTransform("/ar_marker_9", "/robot", now, transform);
+          listener.lookupTransform("/ar_marker_1", "/robot", now, transform);
           cout << "done" << endl;
 
           cout << "Sending transform: obj > robot... ";

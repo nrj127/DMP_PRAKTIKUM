@@ -41,10 +41,6 @@ vec utility::cvec2armadilloColVec(vector<double> input)
     colvec a(input.size());
     cout << "got input of size" << input.size() << endl;
 
-    //typedef std::vector<double> stdvec;
-    //stdvec x(3);
-    //x[0] = 0.0; x[1] = 1.0;  x[2] = 2.0;
-
     a = conv_to<colvec>::from(input);
     return a;
 }
