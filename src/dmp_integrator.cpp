@@ -37,7 +37,7 @@ dmp_integrator::dmp_integrator() : gmr(inputFile, outputFile)
     s_0.resize(ndmp,1);
 
     x_0.resize(3);
-    // end pose
+    // start pose
     x_0[0] = -0.521055939000000;
     x_0[1] = -0.285697768600000;
     x_0[2] = 2.33119239481157;
@@ -126,8 +126,8 @@ vector<double> dmp_integrator::integrate_onestep()
     vector<double> F_vec;
     vector<double> new_x(3);
 
-    iteration ++;
     int i= iteration;
+    iteration ++;
 
     X_in[0]=s_traj[0][i];
     X_in[1]=h_task[0];
@@ -144,11 +144,12 @@ vector<double> dmp_integrator::integrate_onestep()
         F = F_vec[j];
 
         s_traj[j][i+1] = -dt/tau*alpha*s + s;
+        //cout << "iteration" << iteration << "s:" << s << endl;
         v_traj[j][i+1] = dt/tau*(K*(g[j]-x) - D*v - K*(g[j]-x_0[j])*s + s*K*F) + v;
 
         x_traj[j][i+1] = dt/tau*v + x;
 
-        new_x[j]=x_traj[j][i+1];  //writing to results
+        new_x.at(j)=x_traj[j][i+1];  //writing to results
     }
     return new_x;
 }
@@ -157,6 +158,6 @@ vector<double> dmp_integrator::integrate_onestep()
 // destructor
 dmp_integrator::~dmp_integrator()
 {
-
+    cout << "dmp_integrator: destructor frees memory" << endl;
 }
 

@@ -263,16 +263,119 @@ int main(int argc, char *argv[])
 
         case 'e':
         case 'E':
+
+
+
             printf("Executing DMP motion... (please wait)\n");
             if(startCartImpedanceCtrl(FRI, currentCartPose)==0){
                 // Set stiffness
                 for (i = 0; i < FRI_CART_VEC; i++){
                     if(i<3)
-                        CartStiffnessValues[i] = (float)2000.0;
+                        CartStiffnessValues[i] = 200;//(float)2000.0;
                     else
-                        CartStiffnessValues[i] = (float)200.0;
+                        CartStiffnessValues[i] = 200;//(float)200.0;
                 }
                 FRI->SetCommandedCartStiffness(CartStiffnessValues);
+
+
+                printf("Please press any key to move to starting position\n");
+                c	=	WaitForKBCharacter(NULL);
+
+                printf("going to starting position now ...\n");
+                float startingCartPose[FRI_CART_FRM_DIM];
+
+//                float cartdamping[FRI_CART_VEC];
+//                cartdamping[0] = 0.8;
+//                cartdamping[1] = 0.8;
+//                cartdamping[2] = 0.8;
+
+//                cartdamping[3] = 0.8;
+//                cartdamping[4] = 0.8;
+//                cartdamping[5] = 0.8;
+//                FRI->SetCommandedCartDamping(cartdamping);
+//                for(int q=0; q<FRI_CART_VEC ; q++)
+//                    cout << cartdamping[q] << " " ;
+
+                FRI->GetMeasuredCartPose(startingCartPose);
+                cout << "starting position:" << endl;
+                for(int q=0; q<12 ; q++)
+                    cout << startingCartPose[q] << " " ;
+                cout << endl;
+
+//                goalCartPose[3] += 0.2;
+                float goalCartPose[FRI_CART_FRM_DIM];
+                memcpy(goalCartPose, startingCartPose, sizeof(float) * 12);
+
+                float startx = -0.5211;
+                float starty = -0.2857;
+                goalCartPose[3] = startx;
+                goalCartPose[7] = starty;
+
+                cout << "goal cart position:" << endl;
+                for(int q=0; q<12 ; q++)
+                    cout << goalCartPose[q] << " " ;
+                cout << endl;
+
+
+                int n_inter = 500;
+
+//                vec a_startCartPose = utility::cvec2armadilloColVec(startingCartPose);
+//                vec a_goalCartPose = utility::cvec2armadilloColVec(goalCartPose);
+
+                vec a_startCartPose(startingCartPose, FRI_CART_FRM_DIM, 1);
+                vec a_goalCartPose(goalCartPose, FRI_CART_FRM_DIM, 1);
+
+                for(int ni=0; i< n_inter ; i++)
+                {
+
+                    mat b = reshape(a_startCartPose,4,3);
+                    b = b.t();
+                    cout << "pose mat" << b << endl;
+                    mat start_rot_mat = b.submat(0,0,2,2);
+                    vec start_x_trans = b.submat(0,3,2,3);
+
+                    b = reshape(a_goalCartPose,4,3);
+                    b = b.t();
+                    cout << "pose mat" << b << endl;
+                    mat goal_rot_mat = b.submat(0,0,2,2);
+                    vec goal_x_trans = b.submat(0,3,2,3);
+
+                    vec des_x = start_x_trans + (goal_x_trans-start_x_trans)*((float) ni)/((float) n_iter);
+
+                    mat des_rot = start_rot_mat;
+                    mat full_mat(3,4);
+                    full_mat.cols(0,2) = des_rot;
+                    full_mat.cols(3) = des_x;
+
+                    vec a_int_pose = full_mat.reshape(startingCartPose,1);
+
+
+                    typedef std::vector<double> stdvec;
+                    stdvec int_pose = conv_to< stdvec >::from(a_int_pose);
+
+                    cout << "interpolated pose" << endl;
+                    for(int q=0; q<12 ; q++)
+                        cout << int_pose[q] << " " ;
+                    cout << endl;
+
+                    sleep(1);
+
+                }
+
+
+                //FRI->SetCommandedCartPose(newCartPose);
+
+                sleep(2);
+                printf("goal reached\n");
+
+                for (i = 0; i < FRI_CART_VEC; i++){
+                    if(i<3)
+                        CartStiffnessValues[i] = 2000;
+                    else
+                        CartStiffnessValues[i] = 200;
+                }
+                FRI->SetCommandedCartStiffness(CartStiffnessValues);
+
 
                 // Execute motion
                 int it_  = 0;
@@ -397,7 +500,21 @@ int main(int argc, char *argv[])
                 cout << "write Matlab file..." << endl;
                 utility::writeMatlabFile(x_traj_mat,"xtraj","../data/xtraj.mat");
 
-                cout << "DONE";
+
+                mxArray* v_traj_mat;
+                v_traj_mat = mxCreateDoubleMatrix(integrator1.v_traj.size(),integrator1.v_traj[0].size(),mxREAL);
+                utility::stdVectorMatrix2matlabMatrix(&integrator1.v_traj,v_traj_mat);
+                utility::writeMatlabFile(v_traj_mat,"vtraj","../data/vtraj.mat");
+
+                mxArray* s_traj_mat;
+                s_traj_mat = mxCreateDoubleMatrix(integrator1.s_traj.size(),integrator1.s_traj[0].size(),mxREAL);
+                utility::stdVectorMatrix2matlabMatrix(&integrator1.s_traj,s_traj_mat);
+                utility::writeMatlabFile(s_traj_mat,"straj","../data/straj.mat");
+
+
+
+                cout << "DONE" << endl;
+
             }
 
             printf("Motion completed.\n");
@@ -438,6 +555,9 @@ int main(int argc, char *argv[])
                         colvec a(12);
 
                         vector<double> v_double(demo_[it_].begin(), demo_[it_].end());
+
+                        for(int q=0; q<12 ; q++)
+                            cout << v_double.at(q) << " " ;
 
                         a = utility::cvec2armadilloColVec(v_double);
                         cout << "pose" << a << endl;

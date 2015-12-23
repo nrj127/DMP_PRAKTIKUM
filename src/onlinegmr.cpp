@@ -193,5 +193,6 @@ void onlineGMR::combine_data()
 
 onlineGMR::~onlineGMR()
 {
+    cout << "onlineGMR: destructor frees memory" << endl;
 
 }
