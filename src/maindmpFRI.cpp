@@ -279,88 +279,74 @@ int main(int argc, char *argv[])
                 printf("Please press any key to move to starting position\n");
                 c	=	WaitForKBCharacter(NULL);
 
-                printf("going to goal position now ...\n");
-                float startingCartPose[FRI_CART_FRM_DIM];
+                printf("going to starting position now ...\n");
+                float pose_array0[FRI_CART_FRM_DIM];
                 double dstartingCartPose[FRI_CART_FRM_DIM];
 
                 float goalCartPose[FRI_CART_FRM_DIM];
                 double dgoalCartPose[FRI_CART_FRM_DIM];
 
-                FRI->GetMeasuredCartPose(startingCartPose);
+                dmp_integrator integrator1;
 
-                cout << "starting position:" << endl;
+                //getting inital frame
+                FRI->GetMeasuredCartPose(pose_array0);
+
+                mat rot_pose0 = zeros(3,3);
+                vec trans0 = zeros(3);
+
+                utility::array2mat_vec(rot_pose0, trans0, pose_array0, FRI_CART_FRM_DIM);
+
+                cout << "rot_pose0" << endl;
+                cout << rot_pose0 << endl;
+                cout << "trans_pose0" << endl;
+                cout << trans0 << endl;
+
+
+                vec angles0=utility::rotationMatrix2eulerAngles(rot_pose0);
+                cout << " rotation eulerangles0: " << endl;
+                cout << angles0 << endl;
+
+                double startz = 0.1;
+                vec trans_start(3);
+                trans_start(0) = integrator1.getx_0().at(0);
+                trans_start(1) = integrator1.getx_0().at(1);
+                trans_start(2) = startz;
+
+                cout << "cout1" << endl;
+
+                vec angles_start(3);
+                angles_start(0) = -PI;
+                angles_start(1) = 0;
+                angles_start(2) = integrator1.getx_0().at(2);
+
+                cout << "0-position:" << endl;
                 for(int q=0; q<12 ; q++)
-                    cout << startingCartPose[q] << " " ;
+                    cout << pose_array0[q] << " " ;
                 cout << endl;
-
-//                goalCartPose[3] += 0.2;
-
-                memcpy(goalCartPose, startingCartPose, sizeof(float) * 12);
-
-                float startx = -0.5211;
-                float starty = -0.2857;
-                float startz = 0.1;
-
-                goalCartPose[3] = startx;
-                goalCartPose[7] = starty;
-                goalCartPose[11] = startz;
-
-                cout << "goal cart position:" << endl;
-                for(int q=0; q<12 ; q++)
-                    cout << goalCartPose[q] << " " ;
-                cout << endl;
-
 
                 int n_inter = 300;
 
-                copy(startingCartPose,startingCartPose+FRI_CART_FRM_DIM,dstartingCartPose);
-                copy(goalCartPose,goalCartPose+FRI_CART_FRM_DIM,dgoalCartPose);
-                vec a_startCartPose(dstartingCartPose, FRI_CART_FRM_DIM);
-                vec a_goalCartPose(dgoalCartPose, FRI_CART_FRM_DIM);
-
                 for(int ni=0; ni< n_inter ; ni++)
-                {
-                    //cout << "step no " << ni << endl;
-                    mat b = reshape(a_startCartPose,4,3);   //convert 12-vector to rotation matrix and translation vector
-                    b = b.t();
-                    //cout << "start pose mat" << b << endl;
-                    mat start_rot_mat = b.submat(0,0,2,2);
-                    vec start_x_trans = b.submat(0,3,2,3);
+                {                                       
+                    vec des_x = trans0 + (trans_start-trans0)*((float) ni+1)/((float) n_inter);  //interpolation of translation
+                    vec des_angles = angles0 + (angles_start-angles0)*((float) ni+1)/((float) n_inter);
 
-                    b = reshape(a_goalCartPose,4,3);     //convert 12-vector to rotation matrix and translation vector
-                    b = b.t();
-                    //cout << "end pose mat" << b << endl;
-                    mat goal_rot_mat = b.submat(0,0,2,2);
-                    vec goal_x_trans = b.submat(0,3,2,3);
+                    mat des_rotmat = utility::eulerAngles2rotationMatrix(des_angles);
+                    //cout << des_rotmat << endl;
 
-                    vec des_x = start_x_trans + (goal_x_trans-start_x_trans)*((float) ni+1)/((float) n_inter);  //interpolation of translation
-
-                    mat des_rot = start_rot_mat;
-                    mat full_mat(3,4);
-                    full_mat.cols(0,2) = des_rot;
-                    full_mat.col(3) = des_x;
-                    //cout << "full mat interpolated:" << full_mat << endl;
-
-                    full_mat = full_mat.t();
-                    full_mat.reshape(1,FRI_CART_FRM_DIM);
-                    //cout << "full mat reshaped:" << full_mat << endl;
-
-                    rowvec a_int_pose = full_mat.row(0);
-                    //cout << "vec  a_int_pose:" << a_int_pose << endl;
-
-                    float f_int_pose[FRI_CART_FRM_DIM];
-                    copy(a_int_pose.memptr(),a_int_pose.memptr()+sizeof(double) *FRI_CART_FRM_DIM,f_int_pose);
-
-                    //cout << "interpolated pose:   " << endl;
-//                    for(int q=0; q<12 ; q++)
-//                        cout << f_int_pose[q] << " " ;
-//                    cout << endl;
+                    float des_pose_array[FRI_CART_FRM_DIM];
+                    utility::mat_vec2array(des_rotmat, des_x, des_pose_array);
 
                     //sleep(1);
 
+                    cout << "interpolated - position:" << endl;
+                    for(int q=0; q<12 ; q++)
+                        cout << des_pose_array[q] << " " ;
+                    cout << endl;
+
                     FRI->WaitForKRCTick();
                     if (FRI->IsMachineOK())
-                        FRI->SetCommandedCartPose(f_int_pose);
+                        FRI->SetCommandedCartPose(des_pose_array);
                     else
                         cout << "error !" << endl;
 
@@ -368,63 +354,10 @@ int main(int argc, char *argv[])
 
                 sleep(2);
 
-                float pose0[FRI_CART_FRM_DIM];   //measure  pose before starting with dmp execution..
-                FRI->GetMeasuredCartPose(pose0);
+                printf("halt 1\n");
+                c	=	WaitForKBCharacter(NULL);
 
-                cout << "pose0 cart position:" << endl;
-                for(int q=0; q<12 ; q++)
-                    cout << pose0[q] << " " ;
-                cout << endl;
-
-
-                mat rot_pose0 = zeros(3,3);
-                vec trans_pose0 = zeros(3);
-
-                utility::array2mat_vec(rot_pose0, trans_pose0, pose0, FRI_CART_FRM_DIM);
-
-                cout << " rot_pose0: " << rot_pose0 << endl;
-                cout << " trans_pose0: " << trans_pose0 << endl;
-
-                cout << " rotation angles: " << endl;
-                vec eulerangles=utility::rotationMatrix2eulerAngles(rot_pose0);
-                cout << eulerangles << endl;
-
-                vec newangles  = eulerangles;
-                newangles(0) = -PI;
-                newangles(1) = 0;
-
-                mat newrotmat = utility::eulerAngles2rotationMatrix(newangles);
-                cout << newrotmat << endl;
-
-
-                float pose1[FRI_CART_FRM_DIM];
-                utility::mat_vec2array(newrotmat, trans_pose0, pose1);
-
-                cout << "pose1 cart position:" << endl;
-                for(int q=0; q<12 ; q++)
-                    cout << pose1[q] << " " ;
-                cout << endl;
-
-                FRI->SetCommandedCartPose(pose1);
-
-                FRI->GetMeasuredCartPose(pose1);
-                cout << "pose1 cart position after reorientation :" << endl;
-                for(int q=0; q<12 ; q++)
-                    cout << pose1[q] << " " ;
-                cout << endl;
-
-
-
-
-                printf("goal reached\n");
-
-//                for (i = 0; i < FRI_CART_VEC; i++){
-//                    if(i<3)
-//                        CartStiffnessValues[i] = 2000;
-//                    else
-//                        CartStiffnessValues[i] = 200;
-//                }
-//                FRI->SetCommandedCartStiffness(CartStiffnessValues);
+                printf("starting frame reached\n");
 
 
                 // Execute motion
@@ -463,7 +396,7 @@ int main(int argc, char *argv[])
                int display_cycles = 100;
                clock_t elapsed_time = 0;
 
-               dmp_integrator integrator1;
+
 
 
                tf::Vector3 pos = transform.getOrigin();
@@ -548,10 +481,10 @@ int main(int argc, char *argv[])
                         cout << endl;
 
                         cout << "desired orientation in euler angles:" << endl;
-                        utility::array2mat_vec(rot_pose0, trans_pose0, des_pose, FRI_CART_FRM_DIM);
+                        utility::array2mat_vec(rot_pose0, trans0, des_pose, FRI_CART_FRM_DIM);
 
                         cout << " rot_pose0: " << rot_pose0 << endl;
-                        cout << " trans_pose0: " << trans_pose0 << endl;
+                        cout << " trans_pose0: " << trans0 << endl;
 
                         cout << " rotation angles: " << endl;
                         vec eulerangles=utility::rotationMatrix2eulerAngles(rot_pose0);

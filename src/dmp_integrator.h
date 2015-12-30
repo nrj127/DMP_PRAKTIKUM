@@ -28,6 +28,9 @@ public:
 
     virtual ~dmp_integrator();
 
+    vector<double> getx_0();
+
+
 private:
     static const char* outputFile;
     static const char* gmr_outFile;

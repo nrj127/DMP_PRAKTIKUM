@@ -37,7 +37,7 @@ dmp_integrator::dmp_integrator() : gmr(inputFile, outputFile)
     v_0.resize(ndmp,0);
     s_0.resize(ndmp,1);
 
-    x_0.resize(3);
+    x_0.resize(ndmp);
     // start pose
     x_0[0] = -0.521055939000000;
     x_0[1] = -0.285697768600000;
@@ -164,5 +164,10 @@ vector<double> dmp_integrator::integrate_onestep(vec TaskParams)
 dmp_integrator::~dmp_integrator()
 {
     cout << "dmp_integrator: destructor frees memory" << endl;
+}
+
+vector<double> dmp_integrator::getx_0()
+{
+    return x_0;
 }
 
