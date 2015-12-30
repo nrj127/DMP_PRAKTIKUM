@@ -49,6 +49,8 @@ public:
     vector<double> regression(vec vecX);
     vec calcPDF(vec X, vec Mu, mat Sigma);
 
+    int getnDMP() const;
+
     virtual ~onlineGMR();
 };
 

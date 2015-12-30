@@ -441,13 +441,10 @@ int main(int argc, char *argv[])
                     }
 
                     tf::Vector3 pos = transform.getOrigin();
-                    vec X_in(3);
-                    X_in[1] = pos.getX();
-                    X_in[2] = pos.getY();
-
-
-                    if (display_counter%display_cycles == 0) ROS_INFO("Pos: x: %f y: %f",  X_in[1],  X_in[2]);
-
+                    vec taskParams(2);
+                    taskParams[0] = pos.getX();
+                    taskParams[1] = pos.getY();
+                    if (display_counter%display_cycles == 0) ROS_INFO("Pos: x: %f y: %f",  taskParams[0], taskParams[1]);
 
                     // TODO implement dmp and GMR here -----------------------------
 
@@ -461,7 +458,7 @@ int main(int argc, char *argv[])
                     //FRI->SetCommandedCartPose(commCartPose);
                     it_++;
 
-                    vector <double> x_dmp = integrator1.integrate_onestep();
+                    vector <double> x_dmp = integrator1.integrate_onestep(taskParams);
 
                     if(it_%100==0){
                         cout << "calling integrator, step" << integrator1.iteration << endl;

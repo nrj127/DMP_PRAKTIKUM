@@ -17,8 +17,8 @@ public:
     dmp_integrator();
 
     void init();   // read in matlab files and some other initialization
-    void start_integration(void);        // for testing full trajectory calculation
-    vector<double> integrate_onestep();  // used in the control loop
+    void start_integration(vec TaskParams);        // for testing full trajectory calculation
+    vector<double> integrate_onestep(vec TaskParams);  // used in the control loop
 
     vector< vector<double> > x_traj;
     vector< vector<double> > v_traj;
@@ -27,7 +27,6 @@ public:
     int iteration;  //the current iteratio
 
     virtual ~dmp_integrator();
-
 
 private:
     static const char* outputFile;
@@ -45,13 +44,14 @@ private:
     static const double alpha;            //decay factor
     static const int nsteps;
 
-    double h_task[2];
+    // old: double h_task[2];
+    vector<double> h_task;
 
     vector<double> v_0;  //starting values
     vector<double> x_0;
     vector<double> s_0;
 
-    static const double ndmp;
+    int ndmp;
 
     vector<double> g;     //end poses
 
