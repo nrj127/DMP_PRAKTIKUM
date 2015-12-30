@@ -23,7 +23,6 @@ public:
     static mat matlab2armadilloMatrix(mxArray *matlabMatrix);
     static cube matlab2armadilloMatrix3D(mxArray *matlabMatrix);
     static vec cvec2armadilloColVec(vector<double> input);
-
     // rotation matrix decomposition and composition
     static vec rotationMatrix2eulerAngles(mat r);
     static mat eulerAngles2rotationMatrix(vec e);

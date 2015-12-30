@@ -496,17 +496,14 @@ int main(int argc, char *argv[])
                     */
 
                     tf::Vector3 pos = transform.getOrigin();
-                    vec X_in(3);
-                    X_in[1] = pos.getX();
-                    X_in[2] = pos.getY();
-
-
-                    if (display_counter%display_cycles == 0) ROS_INFO("Pos: x: %f y: %f",  X_in[1],  X_in[2]);
-
+                    vec taskParams(2);
+                    taskParams[0] = pos.getX();
+                    taskParams[1] = pos.getY();
+                    if (display_counter%display_cycles == 0) ROS_INFO("Pos: x: %f y: %f",  taskParams[0], taskParams[1]);
 
                     it_++;
 
-                    vector <double> x_dmp = integrator1.integrate_onestep();
+                    vector <double> x_dmp = integrator1.integrate_onestep(taskParams);
                     float des_pose[12];
 
                     vec des_anlges(3);
@@ -520,6 +517,7 @@ int main(int argc, char *argv[])
                     des_trans(0) = x_dmp.at(0);
                     des_trans(1) = x_dmp.at(1);
                     des_trans(2) = startz;
+
 
                     utility::mat_vec2array(newrotmat, des_trans, des_pose);
 

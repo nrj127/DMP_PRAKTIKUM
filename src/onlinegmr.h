@@ -45,9 +45,14 @@ private:
 
 public:
     onlineGMR(const char *inputFile, const char *outputFile);
+
+    // This function need to be called first in order to obtain a gmm model for the regression function
     void readMatlabFile();
     vector<double> regression(vec vecX);
     vec calcPDF(vec X, vec Mu, mat Sigma);
+
+    // get number of dmps
+    int getnDMP() const;
 
     virtual ~onlineGMR();
 };

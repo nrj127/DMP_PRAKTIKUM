@@ -104,6 +104,11 @@ vec onlineGMR::calcPDF(vec X, vec Mu, mat Sigma)
     return 1 / sqrt((denominator * (arma::det(Sigma)))) * arma::exp(-1/2.0 * diff.t() * Sigma.i() * diff);
 }
 
+int onlineGMR::getnDMP() const
+{
+    return gmm.Priors.size();
+}
+
 vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
 {
     // TODO shift all declarations into members --> faster memory allocation
@@ -111,16 +116,14 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
     int nDMP = gmm.Priors.size();
     int nDemos = gmm.Priors[0].size();
     int kComponents = gmm.Priors[0][0].n_cols;
-    int out = gmm.Mu[0][0].n_rows - 1;  // index of output element, usually 3
-    int in = out -1;    // last index of input elements, usually 0 ... 2
+    int out = gmm.Mu[0][0].n_rows - 1;  // index of output element, (3 in sweeping task)
+    int in = out -1;    // last index of input elements, (0 .. 2 in sweeping task)
 
     vec F(nDMP);    F.zeros();
-    // vec Ftemp(nDMP);    Ftemp.zeros();  // DEBUG
     vec currF(kComponents);
     mat InvSigma2(in,in);
     vec sumPriors(nDMP);    sumPriors.zeros();
     vec h(kComponents);
-    cube h_debug(nDMP,nDemos,kComponents);
 
     for (int dmp=0; dmp < nDMP; dmp++) {
         for (int i=0; i < nDemos; i++) {
@@ -146,7 +149,7 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
 
     // debugForcingTerms(F);
 
-    utility::writeMatlabFile(F, "F", outputFile);
+    // utility::writeMatlabFile(F, "F", outputFile);
 
     return utility::armadilloVector2stdVector(&F);
 }
