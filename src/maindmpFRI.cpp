@@ -407,6 +407,13 @@ int main(int argc, char *argv[])
 
                 FRI->SetCommandedCartPose(pose1);
 
+                FRI->GetMeasuredCartPose(pose1);
+                cout << "pose1 cart position after reorientation :" << endl;
+                for(int q=0; q<12 ; q++)
+                    cout << pose1[q] << " " ;
+                cout << endl;
+
+
 
 
                 printf("goal reached\n");
@@ -505,7 +512,7 @@ int main(int argc, char *argv[])
                     vec des_anlges(3);
                     des_anlges(0) = -PI;
                     des_anlges(1) = 0;
-                    des_anlges(1) = x_dmp.at(2);
+                    des_anlges(2) = x_dmp.at(2);
 
                     mat newrotmat = utility::eulerAngles2rotationMatrix(des_anlges);
 
@@ -521,7 +528,7 @@ int main(int argc, char *argv[])
 //                    des_pose[7] = x_dmp.at(1);
 //                    des_pose[11] = startz;
 
-                    //FRI->SetCommandedCartPose(des_pose);
+                    FRI->SetCommandedCartPose(des_pose);
 
                     if((it_-1)%20==0){
                         cout << "calling integrator, step" << integrator1.iteration << endl;
@@ -533,6 +540,15 @@ int main(int argc, char *argv[])
                             cout << des_pose[q] << " " ;
                         cout << endl;
 
+                        cout << "desired orientation in euler angles:" << endl;
+                        utility::array2mat_vec(rot_pose0, trans_pose0, des_pose, FRI_CART_FRM_DIM);
+
+                        cout << " rot_pose0: " << rot_pose0 << endl;
+                        cout << " trans_pose0: " << trans_pose0 << endl;
+
+                        cout << " rotation angles: " << endl;
+                        vec eulerangles=utility::rotationMatrix2eulerAngles(rot_pose0);
+                        cout << eulerangles << endl;
                     }
 
                     ros::spinOnce();
