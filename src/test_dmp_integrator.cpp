@@ -10,7 +10,11 @@ int main(int argc, char *argv[])
     cout << "testing the integrator" << endl;
     dmp_integrator integrator1;
 
-    integrator1.start_integration();
+    vec taskParams;
+    // orig: taskParams << -0.4105 << 0.0552 << endr;
+    taskParams << -0.6105 << 0.0552 << endr;
+
+    integrator1.start_integration(taskParams);
     //utility u1;
 
     mxArray* s_traj_mat;
