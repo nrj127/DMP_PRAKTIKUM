@@ -283,18 +283,10 @@ int main(int argc, char *argv[])
 
                 printf("going to starting position now ...\n");
                 float startingCartPose[FRI_CART_FRM_DIM];
+                double dstartingCartPose[FRI_CART_FRM_DIM];
 
-//                float cartdamping[FRI_CART_VEC];
-//                cartdamping[0] = 0.8;
-//                cartdamping[1] = 0.8;
-//                cartdamping[2] = 0.8;
-
-//                cartdamping[3] = 0.8;
-//                cartdamping[4] = 0.8;
-//                cartdamping[5] = 0.8;
-//                FRI->SetCommandedCartDamping(cartdamping);
-//                for(int q=0; q<FRI_CART_VEC ; q++)
-//                    cout << cartdamping[q] << " " ;
+                float goalCartPose[FRI_CART_FRM_DIM];
+                double dgoalCartPose[FRI_CART_FRM_DIM];
 
                 FRI->GetMeasuredCartPose(startingCartPose);
                 cout << "starting position:" << endl;
@@ -303,7 +295,7 @@ int main(int argc, char *argv[])
                 cout << endl;
 
 //                goalCartPose[3] += 0.2;
-                float goalCartPose[FRI_CART_FRM_DIM];
+
                 memcpy(goalCartPose, startingCartPose, sizeof(float) * 12);
 
                 float startx = -0.5211;
@@ -317,18 +309,17 @@ int main(int argc, char *argv[])
                 cout << endl;
 
 
-                int n_inter = 500;
+                int n_inter = 10;
 
-//                vec a_startCartPose = utility::cvec2armadilloColVec(startingCartPose);
-//                vec a_goalCartPose = utility::cvec2armadilloColVec(goalCartPose);
-
-                vec a_startCartPose(startingCartPose, FRI_CART_FRM_DIM, 1);
-                vec a_goalCartPose(goalCartPose, FRI_CART_FRM_DIM, 1);
+                copy(startingCartPose,startingCartPose+FRI_CART_FRM_DIM,dstartingCartPose);
+                copy(goalCartPose,goalCartPose+FRI_CART_FRM_DIM,dgoalCartPose);
+                vec a_startCartPose(dstartingCartPose, FRI_CART_FRM_DIM);
+                vec a_goalCartPose(dgoalCartPose, FRI_CART_FRM_DIM);
 
                 for(int ni=0; i< n_inter ; i++)
                 {
 
-                    mat b = reshape(a_startCartPose,4,3);
+                    mat b = reshape(a_startCartPose,4,3);   //
                     b = b.t();
                     cout << "pose mat" << b << endl;
                     mat start_rot_mat = b.submat(0,0,2,2);
@@ -340,20 +331,22 @@ int main(int argc, char *argv[])
                     mat goal_rot_mat = b.submat(0,0,2,2);
                     vec goal_x_trans = b.submat(0,3,2,3);
 
-                    vec des_x = start_x_trans + (goal_x_trans-start_x_trans)*((float) ni)/((float) n_iter);
+                    vec des_x = start_x_trans + (goal_x_trans-start_x_trans)*((float) ni)/((float) n_inter);
 
                     mat des_rot = start_rot_mat;
                     mat full_mat(3,4);
                     full_mat.cols(0,2) = des_rot;
-                    full_mat.cols(3) = des_x;
+                    full_mat.col(3) = des_x;
 
-                    vec a_int_pose = full_mat.reshape(startingCartPose,1);
+                    cout << "full mat interpolated:" << full_mat << endl;
 
+                    full_mat.reshape(FRI_CART_FRM_DIM,1);
+                    vec a_int_pose = full_mat.row(0);
 
-                    typedef std::vector<double> stdvec;
+                    typedef std::vector<float> stdvec;
                     stdvec int_pose = conv_to< stdvec >::from(a_int_pose);
 
-                    cout << "interpolated pose" << endl;
+                    cout << "interpolated pose:   " << endl;
                     for(int q=0; q<12 ; q++)
                         cout << int_pose[q] << " " ;
                     cout << endl;
