@@ -28,6 +28,9 @@ public:
     static vec rotationMatrix2eulerAngles(mat r);
     static mat eulerAngles2rotationMatrix(vec e);
 
+    static void array2mat_vec(mat& rot_pose0, vec& vec_pose0,float* pose0, int fri_cart_dim);
+    static void mat_vec2array(mat &rotmat, vec &transvec, float* f_int_pose);
+
     ~utility() { }
 };
 

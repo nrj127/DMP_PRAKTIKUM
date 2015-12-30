@@ -51,7 +51,8 @@ vec utility::rotationMatrix2eulerAngles(mat r)
     a = atan2( r(2,1), r(2,2) );
     b = atan2( -r(2,0), sqrt(r(2,1)*r(2,1) + r(2,2)*r(2,2)) );
     c = atan2( r(1,0), r(0,0) );
-    vec angles = {a, b, c};
+    vec angles;
+    angles << a << b << c << endr;
     return angles;
 }
 
@@ -73,6 +74,8 @@ mat utility::eulerAngles2rotationMatrix(vec e)
 
     return ( Z*Y*X );
 }
+
+
 
 void utility::writeMatlabFile(mat armaMatrix, const char *varname, const char *filename)
 {
@@ -131,4 +134,35 @@ void utility::stdVector2matlabVector(vector<double> *input, mxArray *outputMatri
     mxSetPr(outputMatrix, &(input->at(0)));
 }
 
+void utility::array2mat_vec(mat& rot_pose0, vec& vec_pose0,float* pose0, int fri_cart_dim)
+{
+    double dpose0[fri_cart_dim];
+    copy(pose0,pose0+fri_cart_dim,dpose0);
+    vec a_pose0(dpose0, fri_cart_dim);
+
+    mat b = reshape(a_pose0,4,3);   //convert 12-vector to rotation matrix and translation vector
+    b = b.t();
+    //cout << "start pose mat" << b << endl;
+    rot_pose0 = b.submat(0,0,2,2);
+    vec_pose0 = b.submat(0,3,2,3);
+}
+
+void utility::mat_vec2array(mat &rotmat, vec &transvec, float* f_int_pose)
+{
+    mat full_mat(3,4);
+
+    full_mat.cols(0,2) = rotmat;
+    full_mat.col(3) = transvec;
+    //cout << "full mat interpolated:" << full_mat << endl;
+
+    full_mat = full_mat.t();
+    full_mat.reshape(1,12);
+    //cout << "full mat reshaped:" << full_mat << endl;
+
+    rowvec a_int_pose = full_mat.row(0);
+    //cout << "vec  a_int_pose:" << a_int_pose << endl;
+
+
+    copy(a_int_pose.memptr(),a_int_pose.memptr()+sizeof(double) * 12, f_int_pose);
+}
 
