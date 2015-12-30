@@ -3,3 +3,6 @@ bin/
 utility/pbdlib/build/
 CMakeLists.txt.user
 *.autosave
+
+# temporarily exclude this file because of target differences
+CMakeLists.txt
