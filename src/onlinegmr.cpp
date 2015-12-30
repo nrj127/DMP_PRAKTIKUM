@@ -116,8 +116,8 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
     int nDMP = gmm.Priors.size();
     int nDemos = gmm.Priors[0].size();
     int kComponents = gmm.Priors[0][0].n_cols;
-    int out = gmm.Mu[0][0].n_rows - 1;  // index of output element, usually 3
-    int in = out -1;    // last index of input elements, usually 0 ... 2
+    int out = gmm.Mu[0][0].n_rows - 1;  // index of output element, (3 in sweeping task)
+    int in = out -1;    // last index of input elements, (0 .. 2 in sweeping task)
 
     vec F(nDMP);    F.zeros();
     // vec Ftemp(nDMP);    Ftemp.zeros();  // DEBUG

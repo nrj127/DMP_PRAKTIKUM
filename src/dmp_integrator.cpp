@@ -121,8 +121,6 @@ void dmp_integrator::start_integration(vec TaskParams)
     }
 }
 
-
-
 vector<double> dmp_integrator::integrate_onestep(vec TaskParams)
 {
     double s,v,x,F;
