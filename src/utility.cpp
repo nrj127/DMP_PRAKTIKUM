@@ -45,6 +45,35 @@ vec utility::cvec2armadilloColVec(vector<double> input)
     return a;
 }
 
+vec utility::rotationMatrix2eulerAngles(mat r)
+{
+    double a, b, c;
+    a = atan2( r(2,1), r(2,2) );
+    b = atan2( -r(2,0), sqrt(r(2,1)*r(2,1) + r(2,2)*r(2,2)) );
+    c = atan2( r(1,0), r(0,0) );
+    vec angles = {a, b, c};
+    return angles;
+}
+
+mat utility::eulerAngles2rotationMatrix(vec e)
+{
+    mat X, Y, Z;
+
+    X << 1 << 0<< 0 << endr
+      << 0 << cos(e(0)) << -sin(e(0)) << endr
+      << 0 << sin(e(0)) << cos(e(0)) << endr;
+
+    Y << cos(e(1)) << 0 << sin(e(1)) << endr
+      << 0 << 1 << 0 << endr
+      << -sin(e(1)) << 0 << cos(e(1)) << endr;
+
+    Z << cos(e(2)) << -sin(e(2)) << 0 << endr
+      << sin(e(2)) << cos(e(2)) << 0 << endr
+      << 0 << 0 << 1 << endr;
+
+    return ( Z*Y*X );
+}
+
 void utility::writeMatlabFile(mat armaMatrix, const char *varname, const char *filename)
 {
     MATFile *pmat;

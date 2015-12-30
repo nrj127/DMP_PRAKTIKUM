@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.4.6)
 
-# set(CMAKE_CXX_FLAGS_DEBUG)
-# -DCMAKE_BUILD_TYPE=Debug
-
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 project(testproject)
 
@@ -15,8 +12,7 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #  Release        : w/o debug symbols, w/ optimization
 #  RelWithDebInfo : w/ debug symbols, w/ optimization
 #  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-# set(ROS_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS_DEBUG)
+#set(ROS_BUILD_TYPE RelWithDebInfo)
 
 rosbuild_init()
 
@@ -36,10 +32,10 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #rosbuild_gensrv()
 
 set(INCLUDE_FRI utility/FRILibrary/include)
-set(LIB_FRI $ENV{COTESYS_LWR_DIR}/FRILibrary/Linux/x86/release/lib)
+set(LIB_FRI utility/FRILibrary/Linux/x64/release/lib)
 set(SOURCES_FRI utility/FRILibrary/src)
-set(MATLAB_INCLUDE_DIR /usr/local/MATLAB/R2011b/extern/include)
-set(MATLAB_LIBRARIES /usr/local/MATLAB/R2011b/bin/glnx86)
+set(MATLAB_INCLUDE_DIR /usr/local/MATLAB/R2015b/extern/include)
+set(MATLAB_LIBRARIES /usr/local/MATLAB/R2015b/bin/glnxa64)
 
 
 include_directories(
@@ -106,12 +102,6 @@ target_link_libraries(maindmpFRI
 
 rosbuild_add_executable(mainFRITest  src/mainFRITest.cpp ${sources_irml} ${sources_affan})
 target_link_libraries(mainFRITest -lFastResearchInterfaceLibrary -lrt)
-
-
-# transforms marker coordinates from camera frame to robot cartesian coordinate frame
-rosbuild_add_executable(camera2robot_transform
-    src/camera2robot_transform.cpp
-)
 
 
 # TODO: TE: how to link which target to which library???
