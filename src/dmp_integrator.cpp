@@ -21,7 +21,10 @@ dmp_integrator::dmp_integrator() : gmr(inputFile, outputFile)
 {
     K=pow(omega_n,2.0);
 
-
+    //gmr = onlineGMR(inputFile, outputFile);
+    gmr.readMatlabFile();
+    // get number of DMPs
+    ndmp = gmr.getnDMP();
 
     //std::vector<double>::size_type l = nsteps;
     cout << "out1" << endl;
@@ -76,12 +79,6 @@ dmp_integrator::dmp_integrator() : gmr(inputFile, outputFile)
     iteration = 0;  // starting at iteration 0
 
     cout << "out3" << endl;
-
-    //gmr = onlineGMR(inputFile, outputFile);
-    gmr.readMatlabFile();
-
-    // get number of DMPs
-    ndmp = gmr.getnDMP();
 }
 
 void dmp_integrator::start_integration(vec TaskParams)
@@ -89,7 +86,8 @@ void dmp_integrator::start_integration(vec TaskParams)
     //this is the main integration loop for the dmp:
     double s,v,x,F;
 
-    vec X_in(3);
+    // create input vector of size of TaskParams + 1 for 's' value
+    vec X_in( TaskParams.n_elem + 1 );
     vector<double> F_vec;
 
     for(int i=0; i<nsteps-1; i++)
@@ -99,8 +97,7 @@ void dmp_integrator::start_integration(vec TaskParams)
         // old: X_in[2]=h_task[1];
 
         // Write task params into X_in vector
-        X_in.cols(1,X_in.n_elem-1) = TaskParams;
-
+        X_in( span(1, X_in.n_elem -1) ) = TaskParams;
 
         F_vec=gmr.regression(X_in);
 
@@ -125,6 +122,7 @@ vector<double> dmp_integrator::integrate_onestep(vec TaskParams)
 {
     double s,v,x,F;
 
+    // create input vector of size of TaskParams + 1 for 's' value
     vec X_in( TaskParams.n_elem + 1 );
     vector<double> F_vec;
     vector<double> new_x(3);
@@ -137,7 +135,7 @@ vector<double> dmp_integrator::integrate_onestep(vec TaskParams)
     // old: X_in[2]=h_task[1];
 
     // Write task params into X_in vector
-    X_in.cols(1,X_in.n_elem-1) = TaskParams;
+    X_in( span(1, X_in.n_elem -1) ) = TaskParams;
 
     F_vec=gmr.regression(X_in);
 

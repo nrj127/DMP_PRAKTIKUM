@@ -11,7 +11,8 @@ int main(int argc, char *argv[])
     dmp_integrator integrator1;
 
     vec taskParams;
-    taskParams << -0.4105 << 0.0552 << endr;
+    // orig: taskParams << -0.4105 << 0.0552 << endr;
+    taskParams << -0.6105 << 0.0552 << endr;
 
     integrator1.start_integration(taskParams);
     //utility u1;

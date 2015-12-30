@@ -120,12 +120,10 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
     int in = out -1;    // last index of input elements, (0 .. 2 in sweeping task)
 
     vec F(nDMP);    F.zeros();
-    // vec Ftemp(nDMP);    Ftemp.zeros();  // DEBUG
     vec currF(kComponents);
     mat InvSigma2(in,in);
     vec sumPriors(nDMP);    sumPriors.zeros();
     vec h(kComponents);
-    // cube h_debug(nDMP,nDemos,kComponents);
 
     for (int dmp=0; dmp < nDMP; dmp++) {
         for (int i=0; i < nDemos; i++) {
