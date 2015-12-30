@@ -466,6 +466,15 @@ int main(int argc, char *argv[])
                dmp_integrator integrator1;
 
 
+               tf::Vector3 pos = transform.getOrigin();
+               vec taskParams(2);
+               taskParams[0] = pos.getX();
+               taskParams[1] = pos.getY();
+
+               taskParams.print(cout,"task paramts");
+
+               printf("Please press any key to start execution \n");
+               c	=	WaitForKBCharacter(NULL);
 
                cout << "starting the dmp-loop" << endl;
                while ((FRI->IsMachineOK()) && it_< LoopValue  ){
