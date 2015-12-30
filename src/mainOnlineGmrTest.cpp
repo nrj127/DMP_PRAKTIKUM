@@ -3,6 +3,7 @@
 
 int main(int argc, char* argv[]) {
 
+    /*
     const char* inputFile = "../data/ModelDMPGaussBetaManyData.mat";
     const char* outputFile = "../data/TestOnlineGmrOutput.mat";
 
@@ -46,6 +47,21 @@ int main(int argc, char* argv[]) {
     }
 
     //gmr.writeMatlabFile();
+    */
+
+    // Testing rotation matrix to euler angles
+    mat rot;
+    rot << -0.7021 << 0.7094 << -0.0618 << endr
+        << 0.7114 << 0.7025 << -0.0202 << endr
+        << 0.0291 << -0.0581 << -0.9979 << endr;
+
+    vec angles = utility::rotationMatrix2eulerAngles(rot);
+    angles.print(cout);
+    cout << "--" << endl;
+
+    rot = utility::eulerAngles2rotationMatrix(angles);
+    rot.print(cout);
+
 
     return 0;
 }

@@ -21,3 +21,9 @@ Install http://wiki.ros.org/ar_track_alvar
 sudo apt-get install ros-indigo-ar-track-alvar
 ######################################
 Install Matlab Libraries and Headers
+
+##############################
+To checkout CMakeLists.txt for external platform with Ubuntu 14.04 and MATLAB 2015:
+
+git checkout 9a4e376074db473052865b0ff5c69dd7afc66aa5 -- CMakeLists.txt
+
