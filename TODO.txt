@@ -1,2 +1,5 @@
 * save pdf with tf tree
 * save rviz with frames and markers
+
+* in gmr.regression() all dmps are calculated
+is this function called for each dmp again? --> too much calculation expense
