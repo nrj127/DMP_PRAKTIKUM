@@ -31,15 +31,12 @@ title('online task parameter measurment')
 load  /home/hwadong/cotesys-lwr4+/dmp_praktikum/data/rec_taskparms.mat
 load  /home/hwadong/cotesys-lwr4+/dmp_praktikum/data/rec_end.mat
 
-plot( rec_taskparms(1,:), rec_taskparms(2,:),'*','Color','r');
+h1=plot( rec_taskparms(1,:), rec_taskparms(2,:),'*','Color','r');
 hold on
-plot( rec_end(1,:), rec_end(2,:),'b','LineWidth',2);
+h2=plot( rec_end(1,:), rec_end(2,:),'b');
 axis equal
 
-plot(xtraj(1,:), xtraj(2,:),'g','LineWidth',2);
-legend('online detected task paramteres','recorded motion on kuka','output of motion primitives');
-
-xlabel('x')
-ylabel('y')
+h3=plot(xtraj(1,:), xtraj(2,:),'g');
+legend('task paramteres','recorded motion on kuka','output of motion primitives');
 
 

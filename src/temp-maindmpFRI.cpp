@@ -271,11 +271,9 @@ int main(int argc, char *argv[])
                     if(i<3)
                         CartStiffnessValues[i] = 300;//(float)2000.0;
                     else
-                        CartStiffnessValues[i] = 100;//(float)200.0;
+                        CartStiffnessValues[i] = 300;//(float)200.0;
                 }
                 FRI->SetCommandedCartStiffness(CartStiffnessValues);
-
-
 
 
                 printf("Please press any key to move to starting position\n");
@@ -395,17 +393,14 @@ int main(int argc, char *argv[])
                             // reading transform of marker
                             ros::Time now = ros::Time::now();
                             listener.waitForTransform("/ar_marker_1", "/robot", now, ros::Duration(2.0) );
-                            ROS_INFO("Reading tf (offline )... ");
+                            ROS_INFO("Reading tf (offline)...");
                             listener.lookupTransform("/ar_marker_1", "/robot", now, transform);
                             ROS_INFO("done");
 
                             tf::Vector3 pos = transform.getOrigin();
-
-                            cout << "Position of Marker 1: " << pos.getX() << ", " << pos.getY() << endl;
-
                             taskParams[0] += pos.getX();
                             taskParams[1] += pos.getY();
-
+                            taskParams.print("Task Params");
 
                             tf_average++;
                             exception_flag = false;
@@ -418,24 +413,27 @@ int main(int argc, char *argv[])
                     } while (exception_flag == true);
                 }
 
-               taskParams /= 10.0;
-               taskParams.print(cout,"averaged Task Params");
+                taskParams /= 10.0;
+                taskParams.print(cout,"Averaged Task Params");
 
                int display_counter = 0;
                int display_cycles = 100;
                clock_t elapsed_time = 0;
 
 
-               bool boundary_flags[] = {0, 0, 0, 0};
+               // filtering online vision position of marker 1
+               vec taskParams_minus_1;
+               vec taskParams_act;
+               vec taskParams_new;
+               double alpha = 0.5;
+               taskParams_act = taskParams;
+               taskParams_minus_1 = taskParams_act;
+
 
                printf("Please press any key to start execution \n");
                c	=	WaitForKBCharacter(NULL);
 
                cout << "starting the dmp-loop" << endl;
-
-               mat rec_taskparams;
-               mat rec_endeffector;
-
                while ((FRI->IsMachineOK()) && it_< LoopValue  ){
                     FRI->WaitForKRCTick();
 
@@ -451,55 +449,28 @@ int main(int argc, char *argv[])
                     // transform from camera to robot coordinate system
                     ros::Time now = ros::Time::now();
                     //listener.waitForTransform("/ar_marker_1", "/robot", now, ros::Duration(2.0) );
-                    //if (display_counter%display_cycles == 0) ROS_INFO("Reading tf... ");
 
+                    if (display_counter%display_cycles == 0) ROS_INFO("Reading tf... ");
 
                     try {
                         listener.lookupTransform("/ar_marker_1", "/robot", now - ros::Duration(0.18), transform);
-                        //if (display_counter%display_cycles == 0) ROS_INFO("done");
+                        if (display_counter%display_cycles == 0) ROS_INFO("done");
+                        // averaging with IIR filter (Low Pass)
+
+                        taskParams_minus_1.print("TP -1");
+                        taskParams_act[0] = transform.getOrigin().getX();
+                        taskParams_act[1] = transform.getOrigin().getY();
+                        taskParams_act.print("TP act");
+                        taskParams_new = alpha * taskParams_act + (1 - alpha) * taskParams_minus_1;
+                        taskParams_new.print("TP new");
+                        taskParams_minus_1 = taskParams_act;
                     }
                     catch (tf::TransformException ex){
                         ROS_ERROR("%s",ex.what());
                         ROS_ERROR("could not look up transform from marker 1");
                     }
 
-                    tf::Vector3 pos = transform.getOrigin();
-                    taskParams[0] = pos.getX();
-                    taskParams[1] = pos.getY();
-
-
-
-                    if (taskParams[0] < -0.7) {
-                        taskParams[0] = -0.7;
-                        if (!boundary_flags[0]) cout << "task param x- boundary reached" << endl;
-                        boundary_flags[0] = 1;
-                    }
-                    else boundary_flags[0] = 0;
-
-                    if (taskParams[0] > -0.3) {
-                        taskParams[0] = -0.3;
-                        if (!boundary_flags[1]) cout << "task param x+ boundary reached" << endl;
-                        boundary_flags[1] = 1;
-                    }
-                    else boundary_flags[1] = 0;
-
-                    if (taskParams[1] < -0.1) {
-                        taskParams[1] = -0.1;
-                        if (!boundary_flags[2]) cout << "task param y- boundary reached" << endl;
-                        boundary_flags[2] = 1;
-                    }
-                    else boundary_flags[2] = 0;
-
-                    if (taskParams[1] > 0.05) {
-                        taskParams[1] = 0.05;
-                        if (!boundary_flags[3]) cout << "task param y+ boundary reached" << endl;
-                        boundary_flags[3] = 1;
-                    }
-                    else boundary_flags[3] = 0;
-
-
-
-                    //vec taskParams(2);
+                    //taskParams = taskParams_new;
 
                     if (display_counter%display_cycles == 0) ROS_INFO("Pos: x: %f y: %f",  taskParams[0], taskParams[1]);
 
@@ -520,7 +491,6 @@ int main(int argc, char *argv[])
                     des_trans(1) = x_dmp.at(1);
                     des_trans(2) = startz;
 
-
                     utility::mat_vec2array(newrotmat, des_trans, des_pose);
 
 //                    memcpy(des_pose, pose0, sizeof(float) * 12);
@@ -530,26 +500,10 @@ int main(int argc, char *argv[])
 
                     FRI->SetCommandedCartPose(des_pose);
 
-                    FRI->GetMeasuredCartPose(pose_array0);
-                    colvec posearray(3);
-                    posearray(0) = pose_array0[3];
-                    posearray(1) = pose_array0[7];
-
-                    mat rot_pose0 = zeros(3,3);
-                    vec trans0 = zeros(3);
-                    utility::array2mat_vec(rot_pose0, trans0, pose_array0, FRI_CART_FRM_DIM);
-
-                    vec angles0=utility::rotationMatrix2eulerAngles(rot_pose0);
-                    posearray(2) = angles0(2);
-
-                    rec_endeffector.insert_cols(rec_endeffector.n_cols,posearray);
-                    rec_taskparams.insert_cols(rec_taskparams.n_cols,taskParams);
-
-                    /*
-                    if((it_-1)%20==0){
+                    if((it_-1)%1==0){
                         cout << "calling integrator, step" << integrator1.iteration << endl;
                         cout <<"it_ "<< it_ << endl;
-                        cout <<"dmp0  "<< x_dmp[0] << "   dmp1: "<< x_dmp[1] << "dmp2:  "<< x_dmp[2] << endl;
+                        cout <<"dmp0  "<< x_dmp.at(0) << "   dmp1: "<< x_dmp.at(1) << "dmp2:  "<< x_dmp.at(2) << endl;
 
                         cout << "commanded pose:   " << endl;
                         for(int q=0; q<12 ; q++)
@@ -566,7 +520,6 @@ int main(int argc, char *argv[])
                         vec eulerangles=utility::rotationMatrix2eulerAngles(rot_pose0);
                         cout << eulerangles << endl;
                     }
-                    */
 
                     ros::spinOnce();
 
@@ -603,8 +556,6 @@ int main(int argc, char *argv[])
                 utility::stdVectorMatrix2matlabMatrix(&integrator1.s_traj,s_traj_mat);
                 utility::writeMatlabFile(s_traj_mat,"straj","../data/straj.mat");
 
-                utility::writeMatlabFile(rec_endeffector,"rec_end","../data/rec_end.mat");
-                utility::writeMatlabFile(rec_taskparams,"rec_taskparms","../data/rec_taskparms.mat");
 
                 cout << "DONE" << endl;
 
