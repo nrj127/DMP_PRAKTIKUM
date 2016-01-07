@@ -425,6 +425,15 @@ int main(int argc, char *argv[])
                int display_cycles = 100;
                clock_t elapsed_time = 0;
 
+               // filtering online vision position of marker 1
+               vec taskParams_minus_1;
+               vec taskParams_act;
+               vec taskParams_new;
+               double alpha = 0.05;
+               taskParams_act = taskParams;
+               taskParams_minus_1 = taskParams_act;
+
+
 
                bool boundary_flags[] = {0, 0, 0, 0};
 
@@ -457,16 +466,28 @@ int main(int argc, char *argv[])
                     try {
                         listener.lookupTransform("/ar_marker_1", "/robot", now - ros::Duration(0.18), transform);
                         //if (display_counter%display_cycles == 0) ROS_INFO("done");
+
+                        // averaging with IIR filter (Low Pass)
+                        taskParams_minus_1.print("TP -1");
+                        taskParams_act[0] = transform.getOrigin().getX();
+                        taskParams_act[1] = transform.getOrigin().getY();
+                        taskParams_act.print("TP act");
+                        taskParams_new = alpha * taskParams_act + (1 - alpha) * taskParams_minus_1;
+                        taskParams_new.print("TP new");
+                        taskParams_minus_1 = taskParams_new;
+
                     }
                     catch (tf::TransformException ex){
                         ROS_ERROR("%s",ex.what());
                         ROS_ERROR("could not look up transform from marker 1");
                     }
 
+                    taskParams = taskParams_new;
+                    /*
                     tf::Vector3 pos = transform.getOrigin();
                     taskParams[0] = pos.getX();
                     taskParams[1] = pos.getY();
-
+                    */
 
 
                     if (taskParams[0] < -0.7) {

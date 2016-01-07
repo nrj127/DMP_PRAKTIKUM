@@ -1,4 +1,4 @@
-function plotline( center,angle,linelength,width,shade )
+function plotline( center,angle,linelength,width,shade, ax )
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 % example:
@@ -15,7 +15,7 @@ function plotline( center,angle,linelength,width,shade )
     x2 = center(1) + r * cos(angle+pi);
     y2 = center(2) + r * sin(angle+pi);
     
-    plot([x1 x2],[y1 y2],'color',shade,'linewidth',width)
+    plot(ax, [x1 x2],[y1 y2],'color',shade,'linewidth',width)
 
 end
 
