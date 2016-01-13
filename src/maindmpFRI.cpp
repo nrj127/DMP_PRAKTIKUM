@@ -142,6 +142,37 @@ int main(int argc, char *argv[])
         }
     }
 
+    // for recording of joint positions
+    std::vector< std::vector <float> >  demo_joints;
+    for(i = 0; i<LoopValue; ++i){
+        demo_joints.push_back( std::vector <float>() );
+        for(int j=0; j<7; ++j){
+            demo_joints[i].push_back(0.0);
+        }
+    }
+    float currentJointPose[7];
+
+    std::vector< std::vector <float> >  demo_start_joints;
+    demo_start_joints.push_back( std::vector <float>() );
+
+    std::ofstream ofs;
+
+    int demoCounter = 1;
+
+    // reading Task Params with ROS
+    ros::init(argc, argv, "dmp_listener");
+    ros::NodeHandle n;
+
+    tf::StampedTransform transform;
+    tf::TransformListener listener;
+
+    int tf_average = 0;
+    bool exception_flag = false;
+
+    vec taskParams(2);
+    taskParams = zeros(2);
+
+
     FastResearchInterface	*FRI;
 
     fprintf(stdout, "You may need superuser permission to run this program.\n");
@@ -156,6 +187,10 @@ int main(int argc, char *argv[])
     std::string initJointFile    = packPath + "/data/InitAnglePos.txt";
     std::string genCartTrajFile  = packPath + "/data/GeneratedTrajectory.txt";
     std::string demoCartTrajFile = packPath + "/data/DemonstratedTrajectory.txt";
+    std::string demoJointTrajFile = packPath + "/data/joint_trajectories/DemonstratedTrajectory_Joints";
+    std::string demoTaskParamsFile = packPath + "/data/joint_trajectories/DemonstratedTaskParams";
+    std::string demoJointStartPos = packPath + "/data/joint_trajectories/JointStartPos.txt";
+    std::string fixedJointStartPos = packPath + "/data/joint_trajectories/JointStartPos_fixed.txt";
 
     for (i = 0; i < LBR_MNJ; i++){
         JointStiffnessValues	[i] =	(float)1000.0;
@@ -275,9 +310,6 @@ int main(int argc, char *argv[])
                 }
                 FRI->SetCommandedCartStiffness(CartStiffnessValues);
 
-
-
-
                 printf("Please press any key to move to starting position\n");
                 c	=	WaitForKBCharacter(NULL);
 
@@ -308,7 +340,7 @@ int main(int argc, char *argv[])
                 cout << " rotation eulerangles0: " << endl;
                 cout << angles0 << endl;
 
-                double startz = 0.1;
+                double startz = 0.07;
                 vec trans_start(3);
                 trans_start(0) = integrator1.getx_0().at(0);
                 trans_start(1) = integrator1.getx_0().at(1);
@@ -356,8 +388,6 @@ int main(int argc, char *argv[])
 
                 }
 
-                sleep(2);
-
                 FRI->GetMeasuredCartPose(pose_array0);
 
                 cout << "starting-position:" << endl;
@@ -377,26 +407,17 @@ int main(int argc, char *argv[])
 
                 // TODO implementation -----------------------------------------
 
-                ros::init(argc, argv, "dmp_listener");
-                ros::NodeHandle n;
+                tf_average = 0;
+                exception_flag = false;
 
-                tf::StampedTransform transform;
-                tf::TransformListener listener;
-
-                int tf_average = 0;
-                bool exception_flag = false;
-
-                vec taskParams(2);
-                taskParams = zeros(2);
-
-                while(tf_average < 10) {
+                while(tf_average < 3) {
                     do {
                         try{
                             // reading transform of marker
                             ros::Time now = ros::Time::now();
-                            listener.waitForTransform("/ar_marker_1", "/robot", now, ros::Duration(2.0) );
+                            listener.waitForTransform("/robot", "/ar_marker_1", now, ros::Duration(2.0) );
                             ROS_INFO("Reading tf (offline )... ");
-                            listener.lookupTransform("/ar_marker_1", "/robot", now, transform);
+                            listener.lookupTransform("/robot", "/ar_marker_1", now, transform);
                             ROS_INFO("done");
 
                             tf::Vector3 pos = transform.getOrigin();
@@ -417,9 +438,8 @@ int main(int argc, char *argv[])
                         }
                     } while (exception_flag == true);
                 }
-
-               taskParams /= 10.0;
-               taskParams.print(cout,"averaged Task Params");
+                taskParams /= 3.0;
+                taskParams.print(cout,"averaged Task Params");
 
                int display_counter = 0;
                int display_cycles = 100;
@@ -464,16 +484,16 @@ int main(int argc, char *argv[])
 
 
                     try {
-                        listener.lookupTransform("/ar_marker_1", "/robot", now - ros::Duration(0.18), transform);
+                        listener.lookupTransform("/robot", "/ar_marker_1", now - ros::Duration(0.18), transform);
                         //if (display_counter%display_cycles == 0) ROS_INFO("done");
 
                         // averaging with IIR filter (Low Pass)
-                        taskParams_minus_1.print("TP -1");
+                        //taskParams_minus_1.print("TP -1");
                         taskParams_act[0] = transform.getOrigin().getX();
                         taskParams_act[1] = transform.getOrigin().getY();
-                        taskParams_act.print("TP act");
+                        //taskParams_act.print("TP act");
                         taskParams_new = alpha * taskParams_act + (1 - alpha) * taskParams_minus_1;
-                        taskParams_new.print("TP new");
+                        //taskParams_new.print("TP new");
                         taskParams_minus_1 = taskParams_new;
 
                     }
@@ -636,7 +656,54 @@ int main(int argc, char *argv[])
 
         case 'g':
         case 'G':
+            printf("Please press 'n' to enter demo number\n");
+            c	=	WaitForKBCharacter(NULL);
+            if (c == 'n') {
+                printf("enter demo nr: ");
+                scanf("%d", &demoCounter);
+            }
+
+            printf("Going to saved starting position... (please wait)\n");
+            RunJointTrajectory(FRI, fixedJointStartPos);
+            printf("completed.\n");
+
+            printf("Reading Task Params... (please wait)\n");
+            // reading task params
+            tf_average = 0;
+            exception_flag = false;
+            while(tf_average < 10) {
+                do {
+                    try{
+                        // reading transform of marker
+                        ros::Time now = ros::Time::now();
+                        listener.waitForTransform("/robot", "/ar_marker_1", now, ros::Duration(2.0) );
+                        //ROS_INFO("Reading tf (offline )... ");
+                        listener.lookupTransform("/robot", "/ar_marker_1", now, transform);
+                        //ROS_INFO("done");
+
+                        tf::Vector3 pos = transform.getOrigin();
+
+                        //cout << "Position of Marker 1: " << pos.getX() << ", " << pos.getY() << endl;
+
+                        taskParams[0] += pos.getX();
+                        taskParams[1] += pos.getY();
+
+
+                        tf_average++;
+                        exception_flag = false;
+                    }
+                    catch (tf::TransformException ex){
+                        ROS_ERROR("%s",ex.what());
+                        ros::Duration(0.1).sleep();
+                        exception_flag = true;
+                    }
+                } while (exception_flag == true);
+            }
+            taskParams /= 10.0;
+            taskParams.print(cout,"averaged Task Params");
+
             printf("Gravity compansation... (please wait)\n");
+
             //slepp command
             if(startCartImpedanceCtrl(FRI, currentCartPose)==0){
                 // Set stiffness
@@ -648,21 +715,43 @@ int main(int argc, char *argv[])
                 //CartStiffnessValues[5] = 200.0;
 
                 FRI->SetCommandedCartStiffness(CartStiffnessValues);
-                //LoopValue = 2100;
+
+
+
+
+                LoopValue = 2100;
+                printf("Set loop value to %d\n", LoopValue);
                 int it_ = 0;
                 bool exit_  = false;
                 //int switch_ = 0;
-                while ((FRI->IsMachineOK()) && LoopValue>1 && !exit_){
+
+                printf("Demo No: %d\n", demoCounter);
+
+                stringstream demoCounterStr;
+                demoCounterStr << demoCounter;
+                demoJointTrajFile = packPath + "/data/joint_trajectories/DemonstratedTrajectory_Joints" + demoCounterStr.str() + ".txt";
+                demoTaskParamsFile = packPath + "/data/joint_trajectories/DemonstratedTaskParams" + demoCounterStr.str() + ".txt";
+                demoCartTrajFile = packPath + "/data/joint_trajectories/DemonstratedTrajectory_Cart" + demoCounterStr.str() + ".txt";
+
+                demoCounter++;
+
+
+                while ((FRI->IsMachineOK()) && LoopValue>0 && !exit_){
                     // Feedback current pose to avoid
                     FRI->WaitForKRCTick();
                     FRI->GetMeasuredCartPose(currentCartPose);
                     FRI->SetCommandedCartPose(currentCartPose);
 
+                    FRI->GetMeasuredJointPositions(currentJointPose);
+
+
                     // Store data
                     for(i=0; i<FRI_CART_FRM_DIM; ++i){
                         demo_[it_][i] = currentCartPose[i];
+                    }
 
-
+                    for(i=0; i<7; ++i){
+                        demo_joints[it_][i] = currentJointPose[i];
                     }
 
                     if(it_%100==0){
@@ -670,49 +759,42 @@ int main(int argc, char *argv[])
 
                         vector<double> v_double(demo_[it_].begin(), demo_[it_].end());
 
-                        for(int q=0; q<12 ; q++)
-                            cout << v_double.at(q) << " " ;
+                        //for(int q=0; q<12 ; q++)
+                        //    cout << v_double.at(q) << " " ;
 
                         a = utility::cvec2armadilloColVec(v_double);
-                        cout << "pose" << a << endl;
+                        //cout << "pose" << a << endl;
                         mat b = reshape(a,4,3);
                         b = b.t();
-                        cout << "pose mat" << b << endl;
+                        //cout << "pose mat" << b << endl;
                         mat rot_mat = b.submat(0,0,2,2);
                         vec x_trans = b.submat(0,3,2,3);
-                        cout << "rot mat" << endl << rot_mat << endl;
-                        cout <<"x_trans" << endl << x_trans << endl;
+                        //cout << "rot mat" << endl << rot_mat << endl;
+                        //cout <<"x_trans" << endl << x_trans << endl;
                     }
-                    // Check demonstration finished
-                    /*if(LoopValue<2000){
-                        currPosition[0] = currentCartPose[3];
-                        currPosition[1] = currentCartPose[7];
-                        currPosition[2] = currentCartPose[11];
-
-                        if(getSquaredDistance(prevPosition, currPosition)>0.001*0.001 && switch_==0){
-                            switch_ = 1;
-                            // Store data
-                            for(i=0; i<FRI_CART_FRM_DIM; ++i){
-                                demo_[it_][i] = currentCartPose[i];
-
-                                it_++;
-                            }
-                        }
-                        //else if(getSquaredDistance(prevPosition, currPosition)<0.001*0.001 && switch_==1){
-                        //    exit_ = true;
-                        //}
-                    }
-
-                    prevPosition[0] = currentCartPose[3];
-                    prevPosition[1] = currentCartPose[7];
-                    prevPosition[2] = currentCartPose[11];*/
-
                     it_++;
                     LoopValue--;
                 }
             }
-            printf("Motion completed.\n");
+            printf("Recording completed.\n");
+            // save start position to file
+            printf("start position: \n");
+            demo_start_joints[0] = demo_joints[0];
+            for (int i=0; i<demo_joints[0].size(); i++)
+            {
+                demo_start_joints.at(0).at(i) = demo_joints.at(0).at(i)/PI*180.0;
+                cout << demo_start_joints.at(0).at(i) << endl;
+            }
+
+            saveVectorMatrixToFile(demoJointStartPos, demo_start_joints);
             saveVectorMatrixToFile(demoCartTrajFile, demo_);
+            saveVectorMatrixToFile(demoJointTrajFile, demo_joints);
+
+            printf("saving task params\n");
+
+            ofs.open (demoTaskParamsFile.c_str(), std::ofstream::out | std::ofstream::trunc);
+            ofs << taskParams[0] << endl << taskParams[1];
+            ofs.close();
             break;
 
         case 'r':
