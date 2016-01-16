@@ -35,8 +35,6 @@ typedef struct {            //different structure identical to matlab-script
 class onlineGMR
 {
 private:
-    const char* inputFile;
-    const char* outputFile;
     GMM gmm;
     GMM2 gmm2;
 
@@ -44,11 +42,13 @@ private:
     void combine_data();
 
 public:
-    onlineGMR(const char *inputFile, const char *outputFile);
+    onlineGMR();
 
     // This function need to be called first in order to obtain a gmm model for the regression function
-    void readMatlabFile();
+    void readMatlabFile(const char* filename);
     vector<double> regression(vec vecX);
+    mat regression_jspace(vec X_in /* double s, vec T */);
+
     vec calcPDF(vec X, vec Mu, mat Sigma);
 
     // get number of dmps

@@ -14,11 +14,12 @@ using namespace std;
 class dmp_integrator
 {
 public:
-    dmp_integrator();
+    dmp_integrator(bool joint_space_true, int nsteps_);
 
     void init();   // read in matlab files and some other initialization
     void start_integration(vec TaskParams);        // for testing full trajectory calculation
     vector<double> integrate_onestep(vec TaskParams);  // used in the control loop
+    vector<double> integrate_onestep_jspace(vec TaskParams);
 
     vector< vector<double> > x_traj;
     vector< vector<double> > v_traj;
@@ -45,7 +46,7 @@ private:
     static const double D;
     double K;           //spring
     static const double alpha;            //decay factor
-    static const int nsteps;
+    int nsteps;
 
     // old: double h_task[2];
     vector<double> h_task;

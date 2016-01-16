@@ -1,19 +1,19 @@
 #include "onlinegmr.h"
 #include <stdio.h>
 
-onlineGMR::onlineGMR(const char *inputFile, const char *outputFile) : inputFile(inputFile), outputFile(outputFile)
+onlineGMR::onlineGMR()
 {
     GMM gmm;
 }
 
-void onlineGMR::readMatlabFile()
+void onlineGMR::readMatlabFile(const char *filename)
 {
     MATFile *pmat;
     const char* name= NULL;
     mxArray *matlabInputMatrix;
 
     /* open mat file and read it's content */
-    pmat = matOpen( inputFile, "r");
+    pmat = matOpen( filename, "r");
     if (pmat == NULL)
     {
         cerr << "Error Opening File: " << name << endl;
@@ -152,6 +152,52 @@ vector<double> onlineGMR::regression(vec X_in /* double s, vec T */)
     // utility::writeMatlabFile(F, "F", outputFile);
 
     return utility::armadilloVector2stdVector(&F);
+}
+
+mat onlineGMR::regression_jspace(vec X_in /* double s, vec T */)
+{
+    // TODO shift all declarations into members --> faster memory allocation
+    // declare dimensions
+    int nDMP = gmm.Priors.size();
+    int nDemos = gmm.Priors[0].size();
+    int kComponents = gmm.Priors[0][0].n_cols;
+    int first_out = gmm.Mu[0][0].n_rows - 2;  // index of first output element
+    int last_out = gmm.Mu[0][0].n_rows - 1;  // index of last output element
+    int in = first_out -1;    // last index of input elements ()
+
+    mat F(last_out-first_out+1, nDMP);    F.zeros();
+    mat currF(last_out-first_out+1, kComponents);
+    mat InvSigma2(in,in);
+    vec sumPriors(nDMP);    sumPriors.zeros();
+    vec h(kComponents);
+
+    for (int dmp=0; dmp < nDMP; dmp++) {
+        for (int i=0; i < nDemos; i++) {
+            for (int k=0; k < kComponents; k++) {
+                sumPriors(dmp) += as_scalar(gmm.Priors_mixtures[dmp][i] * gmm.Priors[dmp][i](k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0,0,in,in)));
+            }
+        }
+
+        for (int i=0; i < nDemos; i++) {
+            for (int k=0; k < kComponents; k++) {
+                // invert Sigma Matrix
+                InvSigma2 = gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in).i();
+                // calc current F term
+                currF.col(k) = gmm.Mu[dmp][i].submat(first_out, k, last_out, k) + gmm.Sigma2[dmp][i].slice(k).submat(first_out, 0, last_out, in) * InvSigma2 * (X_in - gmm.Mu[dmp][i].submat(0,k,in,k));
+                h[k] = as_scalar((gmm.Priors_mixtures[dmp][i] * gmm.Priors[dmp][i](0, k) * calcPDF(X_in, gmm.Mu[dmp][i].submat(0,k,in,k), gmm.Sigma2[dmp][i].slice(k).submat(0, 0, in, in))) / sumPriors(dmp));
+            }
+            F.col(dmp) += currF * h;
+            //F[dmp] += sum(h % currF);
+        }
+    }
+//    cout << "xin" << X_in << endl;
+//    cout << "F "<< F << endl;
+
+    // debugForcingTerms(F);
+
+    // utility::writeMatlabFile(F, "F", outputFile);
+
+    return F;
 }
 
 void onlineGMR::debugForcingTerms(vec F)

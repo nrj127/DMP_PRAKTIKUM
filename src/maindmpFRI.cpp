@@ -21,6 +21,14 @@
 #include <tf/transform_listener.h>
 #include <geometry_msgs/Vector3.h>
 
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define BILLION  1000000000L;
+
+
 using namespace std;
 
 #ifndef PI
@@ -42,6 +50,26 @@ int startCartImpedanceCtrl(FastResearchInterface *fri, float *commCartPose){
 
         fri->GetMeasuredCartPose(commCartPose);
         fri->SetCommandedCartPose(commCartPose);
+
+        // Restart
+        resultValue	= fri->StartRobot(controlScheme);
+        if (resultValue != EOK){
+            std::cout << "An error occurred during starting up the robot..." << std::endl;
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int startJointImpedanceCtrl(FastResearchInterface *fri, float *commJointPose){
+    unsigned int controlScheme = FastResearchInterface::JOINT_IMPEDANCE_CONTROL;
+    int resultValue;
+    if(fri->GetCurrentControlScheme() != controlScheme || !fri->IsMachineOK()){
+        // Stop
+        fri->StopRobot();
+
+        fri->GetMeasuredJointPositions(commJointPose);
+        fri->SetCommandedJointPositions(commJointPose);
 
         // Restart
         resultValue	= fri->StartRobot(controlScheme);
@@ -180,7 +208,7 @@ int main(int argc, char *argv[])
 
     std::string packPath = ros::package::getPath("dmp_praktikum");
 
-    FRI = new FastResearchInterface((packPath + "/data/Control-FRI-Driver_5ms.init").c_str());
+    FRI = new FastResearchInterface((packPath + "/data/Control-FRI-Driver_1ms.init").c_str());
     fprintf(stdout, "OK-OK\n");
     fflush(stdout);
 
@@ -191,6 +219,8 @@ int main(int argc, char *argv[])
     std::string demoTaskParamsFile = packPath + "/data/joint_trajectories/DemonstratedTaskParams";
     std::string demoJointStartPos = packPath + "/data/joint_trajectories/JointStartPos.txt";
     std::string fixedJointStartPos = packPath + "/data/joint_trajectories/JointStartPos_fixed.txt";
+
+    cout << "FRI Initial Cycle Time: " << FRI->GetFRICycleTime() << endl;
 
     for (i = 0; i < LBR_MNJ; i++){
         JointStiffnessValues	[i] =	(float)1000.0;
@@ -218,7 +248,8 @@ int main(int argc, char *argv[])
         printf("          s  for starting the KUKA Fast Research Interface\n");
         printf("          x  for stopping the KUKA Fast Research Interface\n");
         printf("          h  for start the joint position controller and go to home position\n");
-        printf("          e  for executing dmp motion\n");
+        printf("          e  for executing dmp motion in CARTESIAN SPACE\n");
+        printf("          j  for executing dmp motion in JOINT SPACE\n");
         printf("          g  for the gravity compensation mode\n");
         printf("          r  for reproducing demonstrated motion\n");
         printf("---------------------------------------------------------------------------------------\n\n");
@@ -320,7 +351,7 @@ int main(int argc, char *argv[])
                 float goalCartPose[FRI_CART_FRM_DIM];
                 double dgoalCartPose[FRI_CART_FRM_DIM];
 
-                dmp_integrator integrator1;
+                dmp_integrator integrator1(false, LoopValue);
 
                 //getting inital frame
                 FRI->GetMeasuredCartPose(pose_array0);
@@ -464,6 +495,8 @@ int main(int argc, char *argv[])
 
                mat rec_taskparams;
                mat rec_endeffector;
+
+               float sum_time = 0;
 
                while ((FRI->IsMachineOK()) && it_< LoopValue  ){
                     FRI->WaitForKRCTick();
@@ -649,6 +682,248 @@ int main(int argc, char *argv[])
 
                 cout << "DONE" << endl;
 
+            }
+
+            printf("Motion completed.\n");
+            break;
+
+        case 'j':
+        case 'J':
+
+            printf("Executing DMP motion in JOINT SPACE... (please wait)\n");
+
+            printf("Going to saved starting position... (please wait)\n");
+            RunJointTrajectory(FRI, fixedJointStartPos);
+            printf("completed.\n");
+
+            if(startJointImpedanceCtrl(FRI, currentCartPose)==0){
+                // Set stiffness
+                for (i = 0; i < LBR_MNJ; i++){
+                    JointStiffnessValues	[i] =	(float)200.0;
+                    JointDampingValues		[i]	=	(float)0.7;
+                }
+
+
+
+                FRI->SetCommandedJointStiffness(JointStiffnessValues);
+                FRI->SetCommandedJointDamping(JointDampingValues);
+
+                float pose_array0[FRI_CART_FRM_DIM];
+                float pose_joint_array0[7];
+
+                // Execute motion
+                int it_  = 0;
+                LoopValue = 4200;
+
+                dmp_integrator integrator1(true,LoopValue);
+
+                // TODO implementation -----------------------------------------
+
+                tf_average = 0;
+                exception_flag = false;
+
+                while(tf_average < 3) {
+                    do {
+                        try{
+                            // reading transform of marker
+                            ros::Time now = ros::Time::now();
+                            listener.waitForTransform("/robot", "/ar_marker_1", now, ros::Duration(2.0) );
+                            ROS_INFO("Reading tf (offline )... ");
+                            listener.lookupTransform("/robot", "/ar_marker_1", now, transform);
+                            ROS_INFO("done");
+
+                            tf::Vector3 pos = transform.getOrigin();
+
+                            cout << "Position of Marker 1: " << pos.getX() << ", " << pos.getY() << endl;
+
+                            taskParams[0] += pos.getX();
+                            taskParams[1] += pos.getY();
+
+
+                            tf_average++;
+                            exception_flag = false;
+                        }
+                        catch (tf::TransformException ex){
+                            ROS_ERROR("%s",ex.what());
+                            ros::Duration(0.1).sleep();
+                            exception_flag = true;
+                        }
+                    } while (exception_flag == true);
+                }
+                taskParams /= 3.0;
+                taskParams.print(cout,"averaged Task Params");
+
+                // TODO
+                taskParams[0] -= 0.07;
+
+                // TODO
+                //taskParams[0] = -0.65;
+                //taskParams[1] = +0.05;
+
+                int display_counter = 0;
+                int display_cycles = 100;
+                clock_t elapsed_time = 0;
+
+                // filtering online vision position of marker 1
+                vec taskParams_minus_1;
+                vec taskParams_act;
+                vec taskParams_new;
+                double alpha = 0.05;
+                taskParams_act = taskParams;
+                taskParams_minus_1 = taskParams_act;
+
+                bool boundary_flags[] = {0, 0, 0, 0};
+
+                printf("Please press any key to start execution \n");
+                c	=	WaitForKBCharacter(NULL);
+
+                cout << "starting the dmp-loop" << endl;
+
+                mat rec_taskparams;
+                mat rec_endeffector;
+
+                double sum_time = 0;
+
+                while ((FRI->IsMachineOK()) && it_< LoopValue  ){
+                    FRI->WaitForKRCTick();
+                    //cout << FRI->GetFRICycleTime() << endl;
+
+                    // time measurement start -----------------------------------------------
+                    struct timespec start, stop;
+                    double accum;
+
+                    if( clock_gettime( CLOCK_REALTIME, &start) == -1 ) {
+                        perror( "clock gettime" );
+                        exit( EXIT_FAILURE );
+                    }
+                    // -----------------------------------------------------------------------
+
+                    display_counter++;
+
+                    ros::Time now = ros::Time::now();
+
+                    try {
+                        listener.lookupTransform("/robot", "/ar_marker_1", now - ros::Duration(0.18), transform);
+                        //if (display_counter%display_cycles == 0) ROS_INFO("done");
+
+                        // averaging with IIR filter (Low Pass)
+                        //taskParams_minus_1.print("TP -1");
+                        taskParams_act[0] = transform.getOrigin().getX();
+                        taskParams_act[1] = transform.getOrigin().getY();
+                        //taskParams_act.print("TP act");
+                        taskParams_new = alpha * taskParams_act + (1 - alpha) * taskParams_minus_1;
+                        //taskParams_new.print("TP new");
+                        taskParams_minus_1 = taskParams_new;
+
+                    }
+                    catch (tf::TransformException ex){
+                        //ROS_ERROR("%s",ex.what());
+                        //ROS_ERROR("could not look up transform from marker 1");
+                    }
+
+                    // TODO
+                    taskParams = taskParams_new;
+
+                    if (taskParams[0] < -0.7) {
+                        taskParams[0] = -0.7;
+                        if (!boundary_flags[0]) cout << "task param x- boundary reached" << endl;
+                        boundary_flags[0] = 1;
+                    }
+                    else boundary_flags[0] = 0;
+
+                    if (taskParams[0] > -0.3) {
+                        taskParams[0] = -0.3;
+                        if (!boundary_flags[1]) cout << "task param x+ boundary reached" << endl;
+                        boundary_flags[1] = 1;
+                    }
+                    else boundary_flags[1] = 0;
+
+                    if (taskParams[1] < -0.05) {
+                        taskParams[1] = -0.05;
+                        if (!boundary_flags[2]) cout << "task param y- boundary reached" << endl;
+                        boundary_flags[2] = 1;
+                    }
+                    else boundary_flags[2] = 0;
+
+                    if (taskParams[1] > 0.1) {
+                        taskParams[1] = 0.1;
+                        if (!boundary_flags[3]) cout << "task param y+ boundary reached" << endl;
+                        boundary_flags[3] = 1;
+                    }
+                    else boundary_flags[3] = 0;
+
+                    if (display_counter%display_cycles == 0) ROS_INFO("Pos: x: %f y: %f",  taskParams[0], taskParams[1]);
+
+                    it_++;
+
+                    vector <double> x_dmp = integrator1.integrate_onestep_jspace(taskParams);
+
+                    float des_pose[7];
+                    std::copy(x_dmp.begin(), x_dmp.end(), des_pose);
+
+                    // TODO
+                    FRI->SetCommandedJointPositions(des_pose);
+
+                    FRI->GetMeasuredCartPose(pose_array0);
+                    FRI->GetMeasuredJointPositions(pose_joint_array0);
+
+                    colvec posearray(3);
+                    posearray(0) = pose_array0[3];
+                    posearray(1) = pose_array0[7];
+
+                    mat rot_pose0 = zeros(3,3);
+                    vec trans0 = zeros(3);
+                    utility::array2mat_vec(rot_pose0, trans0, pose_array0, FRI_CART_FRM_DIM);
+
+                    vec angles0=utility::rotationMatrix2eulerAngles(rot_pose0);
+                    posearray(2) = angles0(2);
+
+                    rec_endeffector.insert_cols(rec_endeffector.n_cols,posearray);
+                    rec_taskparams.insert_cols(rec_taskparams.n_cols,taskParams);
+
+                    ros::spinOnce();
+
+                    // time measurement stop ------------------------------------------------
+                    if( clock_gettime( CLOCK_MONOTONIC, &stop) == -1 ) {
+                        perror( "clock gettime" );
+                        exit( EXIT_FAILURE );
+                    }
+
+                    accum = ( stop.tv_sec - start.tv_sec )
+                            + ( stop.tv_nsec - start.tv_nsec )
+                            / BILLION;
+                    if (display_counter%display_cycles == 0) printf( "Cycle Time in s: %lf\n", accum );
+                    // ----------------------------------------------------------------------
+                    sum_time += accum;
+                }
+
+                cout << "Average Czcle Time: " << (sum_time / (double)LoopValue) << endl;
+
+                cout << "saving data..." << endl;
+
+                mxArray* x_traj_mat;
+                cout << "creating matlab matrix..." << endl;
+                x_traj_mat = mxCreateDoubleMatrix(integrator1.x_traj.size(),integrator1.x_traj[0].size(),mxREAL);
+                cout << "call stdVectorMatrix2MatlabMatrix..." << endl;
+                utility::stdVectorMatrix2matlabMatrix(&integrator1.x_traj,x_traj_mat);
+                cout << "write Matlab file..." << endl;
+                utility::writeMatlabFile(x_traj_mat,"xtraj","../data/xtraj.mat");
+
+
+                mxArray* v_traj_mat;
+                v_traj_mat = mxCreateDoubleMatrix(integrator1.v_traj.size(),integrator1.v_traj[0].size(),mxREAL);
+                utility::stdVectorMatrix2matlabMatrix(&integrator1.v_traj,v_traj_mat);
+                utility::writeMatlabFile(v_traj_mat,"vtraj","../data/vtraj.mat");
+
+                mxArray* s_traj_mat;
+                s_traj_mat = mxCreateDoubleMatrix(integrator1.s_traj.size(),integrator1.s_traj[0].size(),mxREAL);
+                utility::stdVectorMatrix2matlabMatrix(&integrator1.s_traj,s_traj_mat);
+                utility::writeMatlabFile(s_traj_mat,"straj","../data/straj.mat");
+
+                utility::writeMatlabFile(rec_endeffector,"rec_end","../data/rec_end.mat");
+                utility::writeMatlabFile(rec_taskparams,"rec_taskparms","../data/rec_taskparms.mat");
+
+                cout << "DONE" << endl;
             }
 
             printf("Motion completed.\n");
